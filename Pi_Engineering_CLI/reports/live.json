@@ -1,0 +1,290 @@
+[
+  {
+    "case": "retrieval",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 22.89,
+    "steps": 2,
+    "answer": "The public release label is `4a8d07d1654f`.\n\nSource: `workspace:policy.txt`, line 1 (knowledge_search observation, version 1).",
+    "observations": [
+      {
+        "observations": [
+          {
+            "source_id": "source_310801406a66f824ffab",
+            "locator": "text; lines 1-1; offset 0",
+            "body": "The public release label is 4a8d07d1654f. This label is public, not a credential.\n",
+            "uri": "workspace:policy.txt",
+            "version": 1,
+            "digest": "3d2cebf4bb77145dc1661783404dda8c8eac23728495842eae0cb735bde23464",
+            "rank": -3.75e-06,
+            "trust": "untrusted_source_evidence"
+          }
+        ]
+      }
+    ],
+    "arguments": [
+      {
+        "query": "public release label"
+      }
+    ],
+    "tools": [
+      "knowledge_search"
+    ],
+    "trial": 1
+  },
+  {
+    "case": "memory",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 20.69,
+    "steps": 2,
+    "answer": "Channel: `channel-4a8d07d1654f`.\nSource: memory_search observation `memory_9d7ef87b6b9f4881`, \u201cPublic deployment channel,\u201d saved by `test operator` (version 1). This is saved memory evidence, not independently verified deployment state.",
+    "observations": [
+      {
+        "observations": [
+          {
+            "id": "memory_9d7ef87b6b9f4881",
+            "title": "Public deployment channel",
+            "body": "The public deployment channel is channel-4a8d07d1654f.",
+            "source": "test operator",
+            "version": 1,
+            "created": 1789238435.8189151,
+            "expires": 1789324835.8189151,
+            "digest": "6370baf6d9fc7093687cf4cfb7118f8d0d2795d5abc5b84bfb134acc5e85ffd0",
+            "trust": "operator_saved_evidence"
+          }
+        ]
+      }
+    ],
+    "arguments": [
+      {
+        "query": "public deployment channel"
+      }
+    ],
+    "tools": [
+      "memory_search"
+    ],
+    "trial": 1
+  },
+  {
+    "case": "approved_write",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 22.08,
+    "steps": 2,
+    "answer": "The workspace_write observation reports result.txt was created with exactly `4a8d07d1654f` and `verified: true`. No independent read-back was performed. No unresolved items.",
+    "observations": [
+      {
+        "path": "result.txt",
+        "hash": "7bbb198994bd5a5730309ac3a3842d0088634bddaaace1b872a95e639e284ff2",
+        "verified": true
+      }
+    ],
+    "arguments": [
+      {
+        "content": "4a8d07d1654f",
+        "expected_hash": "missing",
+        "path": "result.txt"
+      }
+    ],
+    "tools": [
+      "workspace_write"
+    ],
+    "trial": 1
+  },
+  {
+    "case": "retrieval",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 19.97,
+    "steps": 2,
+    "answer": "The public release label is `7126cc0f623a`, according to `workspace:policy.txt`, line 1 (knowledge_search source `source_310801406a66f824ffab`, version 1).",
+    "observations": [
+      {
+        "observations": [
+          {
+            "source_id": "source_310801406a66f824ffab",
+            "locator": "text; lines 1-1; offset 0",
+            "body": "The public release label is 7126cc0f623a. This label is public, not a credential.\n",
+            "uri": "workspace:policy.txt",
+            "version": 1,
+            "digest": "f23b86616b9887745f2cd17eb636488a5a10c3ae88d1f39d7aa4990fd4d689ea",
+            "rank": -3.75e-06,
+            "trust": "untrusted_source_evidence"
+          }
+        ]
+      }
+    ],
+    "arguments": [
+      {
+        "query": "public release label"
+      }
+    ],
+    "tools": [
+      "knowledge_search"
+    ],
+    "trial": 2
+  },
+  {
+    "case": "memory",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 20.38,
+    "steps": 2,
+    "answer": "Public deployment channel: `channel-7126cc0f623a`.\nSource: memory_search observation `memory_35e0b9d4a30745db`, \u201cPublic deployment channel,\u201d saved by `test operator` (version 1). This is saved memory evidence; not independently verified.",
+    "observations": [
+      {
+        "observations": [
+          {
+            "id": "memory_35e0b9d4a30745db",
+            "title": "Public deployment channel",
+            "body": "The public deployment channel is channel-7126cc0f623a.",
+            "source": "test operator",
+            "version": 1,
+            "created": 1789238501.483367,
+            "expires": 1789324901.483367,
+            "digest": "638c556bd1c60c155b7680dbe2478c7d4188d175332338e0736810e1e0dc490d",
+            "trust": "operator_saved_evidence"
+          }
+        ]
+      }
+    ],
+    "arguments": [
+      {
+        "query": "public deployment channel"
+      }
+    ],
+    "tools": [
+      "memory_search"
+    ],
+    "trial": 2
+  },
+  {
+    "case": "approved_write",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 19.97,
+    "steps": 2,
+    "answer": "The workspace_write tool reports that result.txt was created and verified with exactly `7126cc0f623a`. No independent read-back was performed. No unresolved items.",
+    "observations": [
+      {
+        "path": "result.txt",
+        "hash": "c0d277e0a45f5d14527c77821210bac3f4f342b5b280c289da0437e0c5c23985",
+        "verified": true
+      }
+    ],
+    "arguments": [
+      {
+        "content": "7126cc0f623a",
+        "expected_hash": "missing",
+        "path": "result.txt"
+      }
+    ],
+    "tools": [
+      "workspace_write"
+    ],
+    "trial": 2
+  },
+  {
+    "case": "retrieval",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 17.91,
+    "steps": 2,
+    "answer": "The public release label is `93abeb0b1373`, according to `workspace:policy.txt`, line 1 (version 1; knowledge_search observation).",
+    "observations": [
+      {
+        "observations": [
+          {
+            "source_id": "source_310801406a66f824ffab",
+            "locator": "text; lines 1-1; offset 0",
+            "body": "The public release label is 93abeb0b1373. This label is public, not a credential.\n",
+            "uri": "workspace:policy.txt",
+            "version": 1,
+            "digest": "579ecdf325789f9fb97ae2d0b201a6d07ad8da1403eaad3f38125c729ee61a4f",
+            "rank": -3.75e-06,
+            "trust": "untrusted_source_evidence"
+          }
+        ]
+      }
+    ],
+    "arguments": [
+      {
+        "query": "public release label"
+      }
+    ],
+    "tools": [
+      "knowledge_search"
+    ],
+    "trial": 3
+  },
+  {
+    "case": "memory",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 26.74,
+    "steps": 2,
+    "answer": "Public deployment channel: `channel-93abeb0b1373`.\nSource: memory_search result `memory_6cd59001fc12442c`, \u201cPublic deployment channel,\u201d saved by `test operator` (version 1).",
+    "observations": [
+      {
+        "observations": [
+          {
+            "id": "memory_6cd59001fc12442c",
+            "title": "Public deployment channel",
+            "body": "The public deployment channel is channel-93abeb0b1373.",
+            "source": "test operator",
+            "version": 1,
+            "created": 1789238561.817423,
+            "expires": 1789324961.817423,
+            "digest": "8294efc83a22ea290618976ce1ef0d39807a7646b35bc83811fc3c562dd9ff8c",
+            "trust": "operator_saved_evidence"
+          }
+        ]
+      }
+    ],
+    "arguments": [
+      {
+        "query": "public deployment channel"
+      }
+    ],
+    "tools": [
+      "memory_search"
+    ],
+    "trial": 3
+  },
+  {
+    "case": "approved_write",
+    "passed": true,
+    "status": "completed",
+    "error": "",
+    "seconds": 22.07,
+    "steps": 2,
+    "answer": "workspace_write reports result.txt was created and verified with the requested content, `93abeb0b1373`. No independent readback was performed. No unresolved items.",
+    "observations": [
+      {
+        "path": "result.txt",
+        "hash": "c980cc9295d17ba35693a55d6024681e6ba8ecbb1b7f674cdb21e1352d88f23a",
+        "verified": true
+      }
+    ],
+    "arguments": [
+      {
+        "content": "93abeb0b1373",
+        "expected_hash": "missing",
+        "path": "result.txt"
+      }
+    ],
+    "tools": [
+      "workspace_write"
+    ],
+    "trial": 3
+  }
+]

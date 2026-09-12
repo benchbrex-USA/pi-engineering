@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "probes": [
+    {
+      "name": "public-mcp-sdk-structure",
+      "tool": "deepwiki__read_wiki_structure",
+      "arguments": {"repoName": "modelcontextprotocol/python-sdk"},
+      "input_schema_sha256": "fe2300899f7b8843c53281353c51001b5f77244a259c46b383a1d3b23ce2c137",
+      "response_schema": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {"content": {"type": "array", "minItems": 1}}
+      }
+    }
+  ]
+}

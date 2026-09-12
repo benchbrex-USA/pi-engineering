@@ -1,0 +1,51 @@
+test_bad_dimensions (test_runtime.MathTests.test_bad_dimensions) ... ok
+test_duplicate_ranks_rejected (test_runtime.MathTests.test_duplicate_ranks_rejected) ... ok
+test_kv (test_runtime.MathTests.test_kv) ... ok
+test_recall (test_runtime.MathTests.test_recall) ... ok
+test_rr (test_runtime.MathTests.test_rr) ... ok
+test_rrf (test_runtime.MathTests.test_rrf) ... ok
+test_wilson (test_runtime.MathTests.test_wilson) ... ok
+test_wilson_zero (test_runtime.MathTests.test_wilson_zero) ... ok
+test_atomic_error_requires_reconciliation_status (test_runtime.RuntimeTests.test_atomic_error_requires_reconciliation_status) ... ok
+test_authorized_commit (test_runtime.RuntimeTests.test_authorized_commit) ... ok
+test_bad_citation (test_runtime.RuntimeTests.test_bad_citation) ... ok
+test_bm25_retrieval_prefers_specific_short_evidence (test_runtime.RuntimeTests.test_bm25_retrieval_prefers_specific_short_evidence) ... ok
+test_broker_denial_reaches_public_status (test_runtime.RuntimeTests.test_broker_denial_reaches_public_status) ... ok
+test_budget_exhaustion_with_new_invalid_proposals (test_runtime.RuntimeTests.test_budget_exhaustion_with_new_invalid_proposals) ... ok
+test_changed_payload (test_runtime.RuntimeTests.test_changed_payload) ... ok
+test_consumed_token_cannot_authorize_new_intent (test_runtime.RuntimeTests.test_consumed_token_cannot_authorize_new_intent) ... ok
+test_context_bundle_budget_and_manifest (test_runtime.RuntimeTests.test_context_bundle_budget_and_manifest) ... ok
+test_context_rejects_invalid_budget (test_runtime.RuntimeTests.test_context_rejects_invalid_budget) ... ok
+test_context_snapshot_changes_with_source_version (test_runtime.RuntimeTests.test_context_snapshot_changes_with_source_version) ... ok
+test_cross_tenant_action (test_runtime.RuntimeTests.test_cross_tenant_action) ... ok
+test_cross_tenant_ticket (test_runtime.RuntimeTests.test_cross_tenant_ticket) ... ok
+test_deadline_after_call (test_runtime.RuntimeTests.test_deadline_after_call) ... ok
+test_deadline_before_call (test_runtime.RuntimeTests.test_deadline_before_call) ... ok
+test_expired_approval (test_runtime.RuntimeTests.test_expired_approval) ... ok
+test_idempotent_replay (test_runtime.RuntimeTests.test_idempotent_replay) ... ok
+test_invalid_budgets (test_runtime.RuntimeTests.test_invalid_budgets) ... ok
+test_invalid_numeric_type (test_runtime.RuntimeTests.test_invalid_numeric_type) ... ok
+test_key_collision (test_runtime.RuntimeTests.test_key_collision) ... ok
+test_minimal_audit (test_runtime.RuntimeTests.test_minimal_audit) ... ok
+test_missing_approval (test_runtime.RuntimeTests.test_missing_approval) ... ok
+test_model_failure (test_runtime.RuntimeTests.test_model_failure) ... ok
+test_no_evidence (test_runtime.RuntimeTests.test_no_evidence) ... ok
+test_no_progress (test_runtime.RuntimeTests.test_no_progress) ... ok
+test_overlap_retrieval_remains_available_as_baseline (test_runtime.RuntimeTests.test_overlap_retrieval_remains_available_as_baseline) ... ok
+test_persistent_approval_survives_broker_restart (test_runtime.RuntimeTests.test_persistent_approval_survives_broker_restart) ... ok
+test_public_manifest_excludes_raw_text (test_runtime.RuntimeTests.test_public_manifest_excludes_raw_text) ... ok
+test_read_only_answer (test_runtime.RuntimeTests.test_read_only_answer) ... ok
+test_rollback_is_atomic (test_runtime.RuntimeTests.test_rollback_is_atomic) ... ok
+test_scope_before_model (test_runtime.RuntimeTests.test_scope_before_model) ... ok
+test_stale_policy (test_runtime.RuntimeTests.test_stale_policy) ... ok
+test_stale_resource (test_runtime.RuntimeTests.test_stale_resource) ... ok
+test_unauthenticated (test_runtime.RuntimeTests.test_unauthenticated) ... ok
+test_unknown_fields (test_runtime.RuntimeTests.test_unknown_fields) ... ok
+test_unsupported_answer (test_runtime.RuntimeTests.test_unsupported_answer) ... ok
+test_wrong_actor (test_runtime.RuntimeTests.test_wrong_actor) ... ok
+test_wrong_run (test_runtime.RuntimeTests.test_wrong_run) ... ok
+
+----------------------------------------------------------------------
+Ran 46 tests in 0.009s
+
+OK

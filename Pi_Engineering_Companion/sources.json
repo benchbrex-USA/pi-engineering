@@ -1,0 +1,605 @@
+[
+  {
+    "id": "R01",
+    "author": "Amershi et al.",
+    "title": "Guidelines for Human-AI Interaction",
+    "edition": "2019",
+    "url": "https://www.microsoft.com/en-us/research/publication/guidelines-for-human-ai-interaction/",
+    "support": "Human-AI interaction design and recovery",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R02",
+    "author": "World Wide Web Consortium",
+    "title": "Web Content Accessibility Guidelines (WCAG) 2.2",
+    "edition": "W3C Recommendation; living publication",
+    "url": "https://www.w3.org/TR/WCAG22/",
+    "support": "Accessibility requirements for interaction design",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R03",
+    "author": "Anthropic",
+    "title": "Building effective agents",
+    "edition": "2024",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "support": "Workflow patterns and complexity trade-offs",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R04",
+    "author": "LangChain",
+    "title": "LangGraph Graph API overview",
+    "edition": "Living documentation",
+    "url": "https://docs.langchain.com/oss/python/langgraph/graph-api",
+    "support": "Nodes, edges, state, reducers and re-execution",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R05",
+    "author": "LangChain",
+    "title": "LangGraph Persistence",
+    "edition": "Living documentation",
+    "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+    "support": "Checkpoints versus cross-thread stores",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R06",
+    "author": "Temporal",
+    "title": "Temporal Workflow Execution overview",
+    "edition": "Living documentation",
+    "url": "https://docs.temporal.io/workflow-execution",
+    "support": "Durable workflow execution and event history",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R07",
+    "author": "Yao et al.",
+    "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+    "edition": "2022 preprint; ICLR 2023",
+    "url": "https://arxiv.org/abs/2210.03629",
+    "support": "Interleaved action and observation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R08",
+    "author": "Shinn et al.",
+    "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+    "edition": "2023",
+    "url": "https://arxiv.org/abs/2303.11366",
+    "support": "Feedback stored as text rather than weight updates",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R09",
+    "author": "OpenAI",
+    "title": "Prompt engineering",
+    "edition": "Living API documentation",
+    "url": "https://developers.openai.com/api/docs/guides/prompt-engineering",
+    "support": "Prompt structure, instruction roles and versioning",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R10",
+    "author": "OpenAI",
+    "title": "Structured model outputs",
+    "edition": "Living API documentation",
+    "url": "https://developers.openai.com/api/docs/guides/structured-outputs",
+    "support": "Schema-constrained outputs and remaining semantic errors",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R11",
+    "author": "Anthropic",
+    "title": "Effective context engineering for AI agents",
+    "edition": "2025",
+    "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+    "support": "Context selection, compaction and structured notes",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R12",
+    "author": "Liu et al.",
+    "title": "Lost in the Middle: How Language Models Use Long Contexts",
+    "edition": "2023; TACL 2024",
+    "url": "https://arxiv.org/abs/2307.03172",
+    "support": "Position sensitivity in the studied long-context models",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R13",
+    "author": "Packer et al.",
+    "title": "MemGPT: Towards LLMs as Operating Systems",
+    "edition": "2023; revised 2024",
+    "url": "https://arxiv.org/abs/2310.08560",
+    "support": "Hierarchical context and external memory",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R14",
+    "author": "Lewis et al.",
+    "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+    "edition": "2020",
+    "url": "https://arxiv.org/abs/2005.11401",
+    "support": "Retrieval plus parametric generation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R15",
+    "author": "Karpukhin et al.",
+    "title": "Dense Passage Retrieval for Open-Domain Question Answering",
+    "edition": "2020",
+    "url": "https://arxiv.org/abs/2004.04906",
+    "support": "Dual-encoder passage retrieval",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R16",
+    "author": "Elastic",
+    "title": "Reciprocal rank fusion",
+    "edition": "Living Elasticsearch documentation",
+    "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+    "support": "Combining ranked result lists",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R17",
+    "author": "Edge et al.",
+    "title": "From Local to Global: A Graph RAG Approach to Query-Focused Summarization",
+    "edition": "2024",
+    "url": "https://www.microsoft.com/en-us/research/publication/from-local-to-global-a-graph-rag-approach-to-query-focused-summarization/",
+    "support": "Entity graphs and community summaries",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R18",
+    "author": "OpenAI",
+    "title": "Function calling",
+    "edition": "Living API documentation",
+    "url": "https://developers.openai.com/api/docs/guides/function-calling",
+    "support": "Application-executed tool call lifecycle",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R19",
+    "author": "Model Context Protocol contributors",
+    "title": "Model Context Protocol specification",
+    "edition": "Revision 2025-11-25",
+    "url": "https://modelcontextprotocol.io/specification/2025-11-25",
+    "support": "Protocol architecture and interoperability",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R20",
+    "author": "Model Context Protocol contributors",
+    "title": "Authorization",
+    "edition": "Revision 2025-11-25",
+    "url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization",
+    "support": "OAuth-based authorization and token audience validation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R21",
+    "author": "OWASP GenAI Security Project",
+    "title": "LLM01:2025 Prompt Injection",
+    "edition": "2025 taxonomy",
+    "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+    "support": "Direct and indirect prompt injection",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R22",
+    "author": "OWASP Cheat Sheet Series",
+    "title": "LLM Prompt Injection Prevention Cheat Sheet",
+    "edition": "Living guidance",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+    "support": "Defense-in-depth controls and testing",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R23",
+    "author": "Vaswani et al.",
+    "title": "Attention Is All You Need",
+    "edition": "2017",
+    "url": "https://arxiv.org/abs/1706.03762",
+    "support": "Transformer and scaled dot-product attention",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R24",
+    "author": "Hu et al.",
+    "title": "LoRA: Low-Rank Adaptation of Large Language Models",
+    "edition": "2021; ICLR 2022",
+    "url": "https://arxiv.org/abs/2106.09685",
+    "support": "Low-rank trainable updates",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R25",
+    "author": "Dettmers et al.",
+    "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+    "edition": "2023",
+    "url": "https://arxiv.org/abs/2305.14314",
+    "support": "Frozen quantized base weights with trainable adapters",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R26",
+    "author": "Rafailov et al.",
+    "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+    "edition": "2023",
+    "url": "https://arxiv.org/abs/2305.18290",
+    "support": "Preference optimization without a separate online RL loop",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R27",
+    "author": "OpenTelemetry contributors",
+    "title": "Generative AI semantic conventions repository",
+    "edition": "Living specification",
+    "url": "https://github.com/open-telemetry/semantic-conventions-genai",
+    "support": "Versioned conventions for GenAI telemetry",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R28",
+    "author": "Google SRE",
+    "title": "Service Level Objectives",
+    "edition": "Site Reliability Engineering, 2016",
+    "url": "https://sre.google/sre-book/service-level-objectives/",
+    "support": "Indicators, objectives and error budgets",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R29",
+    "author": "Marc Brooker / AWS Builders' Library",
+    "title": "Timeouts, retries, and backoff with jitter",
+    "edition": "Current publisher copy accessed 2026",
+    "url": "https://builder.aws.com/content/3EumjoZascWd1oZiEgL8ORlv3qE/timeouts-retries-and-backoff-with-jitter",
+    "support": "Timeouts, retry amplification and jitter",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R30",
+    "author": "AWS Builders' Library",
+    "title": "Making retries safe with idempotent APIs",
+    "edition": "Publisher technical guidance",
+    "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+    "support": "Caller intent, request identifiers and parameter matching",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R31",
+    "author": "NIST",
+    "title": "AI Risk Management Framework",
+    "edition": "AI RMF 1.0, 2023; resource page",
+    "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+    "support": "Govern, Map, Measure and Manage",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R32",
+    "author": "NIST",
+    "title": "Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile",
+    "edition": "NIST AI 600-1, July 2024",
+    "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf",
+    "support": "Generative-AI risks and lifecycle actions",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R33",
+    "author": "Kwon et al.",
+    "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+    "edition": "SOSP 2023",
+    "url": "https://arxiv.org/abs/2309.06180",
+    "support": "KV-cache block management and serving",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R34",
+    "author": "Dao et al.",
+    "title": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+    "edition": "2022",
+    "url": "https://arxiv.org/abs/2205.14135",
+    "support": "Tiled exact attention with reduced memory traffic",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R35",
+    "author": "Liang et al.",
+    "title": "Holistic Evaluation of Language Models",
+    "edition": "2022; TMLR 2023",
+    "url": "https://arxiv.org/abs/2211.09110",
+    "support": "Multidimensional model evaluation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R36",
+    "author": "Zheng et al.",
+    "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+    "edition": "2023",
+    "url": "https://arxiv.org/abs/2306.05685",
+    "support": "Judge biases and human agreement studies",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R37",
+    "author": "Kubernetes contributors",
+    "title": "Resource Management for Pods and Containers",
+    "edition": "Living documentation",
+    "url": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "support": "Requests, limits and scheduling",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R38",
+    "author": "Kubernetes contributors",
+    "title": "Liveness, Readiness, and Startup Probes",
+    "edition": "Living documentation",
+    "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+    "support": "Health and traffic-admission semantics",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R39",
+    "author": "NVIDIA",
+    "title": "Triton Inference Server: Batchers",
+    "edition": "Living documentation",
+    "url": "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/batcher.html",
+    "support": "Batching policies and queue delay",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R40",
+    "author": "Es et al.",
+    "title": "Ragas: Automated Evaluation of Retrieval Augmented Generation",
+    "edition": "2023; revised 2025",
+    "url": "https://arxiv.org/abs/2309.15217",
+    "support": "Component-level RAG assessment",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R41",
+    "author": "Yao et al.",
+    "title": "tau-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+    "edition": "2024",
+    "url": "https://arxiv.org/abs/2406.12045",
+    "support": "Policy-following interactions and outcome-state evaluation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R42",
+    "author": "Jimenez et al.",
+    "title": "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?",
+    "edition": "2023; ICLR 2024",
+    "url": "https://arxiv.org/abs/2310.06770",
+    "support": "Execution-based software-agent evaluation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R43",
+    "author": "Mitchell et al.",
+    "title": "Model Cards for Model Reporting",
+    "edition": "2018; FAT* 2019",
+    "url": "https://arxiv.org/abs/1810.03993",
+    "support": "Intended uses, limitations and disaggregated evaluation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R44",
+    "author": "PostgreSQL Global Development Group",
+    "title": "Row Security Policies",
+    "edition": "PostgreSQL 18 documentation",
+    "url": "https://www.postgresql.org/docs/18/ddl-rowsecurity.html",
+    "support": "Database authorization and bypass caveats",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R45",
+    "author": "PostgreSQL Global Development Group",
+    "title": "Transaction Isolation",
+    "edition": "PostgreSQL 18 documentation",
+    "url": "https://www.postgresql.org/docs/18/transaction-iso.html",
+    "support": "Concurrency and transactional consistency",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R46",
+    "author": "OWASP Cheat Sheet Series",
+    "title": "Authorization Cheat Sheet",
+    "edition": "Living guidance",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+    "support": "Least privilege and per-request enforcement",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R47",
+    "author": "Google SRE",
+    "title": "Alerting on SLOs",
+    "edition": "The Site Reliability Workbook, 2018",
+    "url": "https://sre.google/workbook/alerting-on-slos/",
+    "support": "Error-budget burn-rate alerting",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R48",
+    "author": "Model Context Protocol contributors",
+    "title": "Tools",
+    "edition": "Revision 2025-11-25",
+    "url": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools",
+    "support": "Discovery, schemas and untrusted tool annotations",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R49",
+    "author": "Model Context Protocol contributors",
+    "title": "Security Best Practices",
+    "edition": "2025-11-25 documentation path",
+    "url": "https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices",
+    "support": "Confused deputy, token handling and transport security",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R50",
+    "author": "pgvector contributors",
+    "title": "pgvector README",
+    "edition": "Living implementation documentation",
+    "url": "https://github.com/pgvector/pgvector",
+    "support": "Exact and approximate search, filtering and tenant effects",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R51",
+    "author": "OpenAI",
+    "title": "Evaluation best practices",
+    "edition": "Living API documentation",
+    "url": "https://developers.openai.com/api/docs/guides/evaluation-best-practices",
+    "support": "Task-specific tests and continuous evaluation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R52",
+    "author": "Google SRE",
+    "title": "Handling Overload",
+    "edition": "Site Reliability Engineering, 2016",
+    "url": "https://sre.google/sre-book/handling-overload/",
+    "support": "Load shedding and admission control",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R53",
+    "author": "Apache Lucene",
+    "title": "BM25Similarity",
+    "edition": "Version 9.4.2 API reference",
+    "url": "https://lucene.apache.org/core/9_4_2/core/org/apache/lucene/search/similarities/BM25Similarity.html",
+    "support": "Term saturation, length normalization and inverse document frequency",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R54",
+    "author": "Gebru et al.",
+    "title": "Datasheets for Datasets",
+    "edition": "2018; revised 2021",
+    "url": "https://arxiv.org/abs/1803.09010",
+    "support": "Dataset provenance and maintenance documentation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R55",
+    "author": "Guo et al.",
+    "title": "On Calibration of Modern Neural Networks",
+    "edition": "ICML 2017",
+    "url": "https://arxiv.org/abs/1706.04599",
+    "support": "Reliability diagrams and calibration methodology",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R56",
+    "author": "Anthropic",
+    "title": "Demystifying evals for AI agents",
+    "edition": "2026",
+    "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+    "support": "Outcome graders, repeated trials and isolated environments",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R57",
+    "author": "OpenTelemetry contributors",
+    "title": "Traces",
+    "edition": "Living documentation",
+    "url": "https://opentelemetry.io/docs/concepts/signals/traces/",
+    "support": "Spans, trace context and distributed causality",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R58",
+    "author": "NIST",
+    "title": "Privacy Framework",
+    "edition": "Resource page",
+    "url": "https://www.nist.gov/privacy-framework",
+    "support": "Privacy risk management",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R59",
+    "author": "Python Software Foundation",
+    "title": "sqlite3: DB-API 2.0 interface for SQLite databases",
+    "edition": "Python documentation",
+    "url": "https://docs.python.org/3/library/sqlite3.html",
+    "support": "Parameterized SQL and transaction behavior",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R60",
+    "author": "Hugging Face",
+    "title": "PEFT: LoRA reference and developer guidance",
+    "edition": "Main-branch documentation",
+    "url": "https://huggingface.co/docs/peft/main/package_reference/lora.md",
+    "support": "Adapter target modules, rank and scaling configuration",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R61",
+    "author": "PyTorch contributors",
+    "title": "Reproducibility",
+    "edition": "Main-branch developer notes",
+    "url": "https://docs.pytorch.org/docs/main/notes/randomness.html",
+    "support": "Seeds, deterministic operations and platform caveats",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R62",
+    "author": "NVIDIA",
+    "title": "Megatron Bridge Parallelisms Guide",
+    "edition": "Living documentation",
+    "url": "https://docs.nvidia.com/nemo/megatron-bridge/latest/parallelisms.html",
+    "support": "Data, tensor, pipeline and context parallelism",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R63",
+    "author": "SLSA contributors",
+    "title": "SLSA specification",
+    "edition": "Version 1.1",
+    "url": "https://slsa.dev/spec/v1.1/",
+    "support": "Software-supply-chain provenance",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R64",
+    "author": "OWASP Cheat Sheet Series",
+    "title": "Server Side Request Forgery Prevention Cheat Sheet",
+    "edition": "Living guidance",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+    "support": "Network destination validation",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R65",
+    "author": "OWASP Cheat Sheet Series",
+    "title": "Secrets Management Cheat Sheet",
+    "edition": "Living guidance",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+    "support": "Credential lifecycle and secret handling",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R66",
+    "author": "National Institute of Standards and Technology",
+    "title": "Proportion Confidence Interval",
+    "edition": "Dataplot reference manual; current documentation",
+    "url": "https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/propconf.htm",
+    "support": "Wilson binomial confidence intervals and coverage caveats",
+    "accessed": "2026-09-12"
+  },
+  {
+    "id": "R67",
+    "author": "Anthropic",
+    "title": "Effective harnesses for long-running agents",
+    "edition": "November 26, 2025",
+    "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+    "support": "Progress artifacts and incremental verification across sessions",
+    "accessed": "2026-09-12"
+  }
+]

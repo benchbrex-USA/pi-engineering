@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pi-engineering"
+version = "0.3.2"
+description = "Graph-based agent tasks and governed MCP tools in the terminal"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "mcp==1.29.1",
+  "rich==14.3.4",
+  "pydantic==2.12.5",
+  "httpx==0.28.1",
+  "jsonschema==4.26.0",
+  "cryptography==50.0.1",
+  "pypdf==6.16.1",
+]
+
+[project.scripts]
+pi-engineering = "pi_app:main"
+
+[tool.setuptools]
+py-modules = ["pi_app", "pi_workspace", "pi_engine", "pi_tools", "pi_terminal", "pi_workflow", "pi_server", "pi_models", "pi_knowledge", "pi_operations", "pi_qualification"]

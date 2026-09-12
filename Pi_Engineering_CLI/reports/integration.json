@@ -1,0 +1,24 @@
+{
+  "provider": "DeepWiki",
+  "transport": "Streamable HTTP",
+  "tool": "deepwiki__read_wiki_structure",
+  "repository": "modelcontextprotocol/python-sdk",
+  "passed": true,
+  "seconds": 7.72,
+  "qualification": {
+    "id": "qualification_c7bee5cc46b14844",
+    "created": 1789238445.395186,
+    "contract_hash": "1998411a80ac534c13a8e7ee07ee405de3194f8976f6d67b513f1ac754268031",
+    "config_hash": "2aef97a3c86cc8f7df072c85dfb70266d317cd78dadfbbf8250e1a5620c0cc70",
+    "status": "passed",
+    "probes": [
+      {
+        "name": "public-sdk-structure",
+        "tool": "deepwiki__read_wiki_structure",
+        "passed": true,
+        "result_hash": "f5ebf470fb15e41ce339e7f80637f2bfe648d8b611078fcde8aa4b7b86f03ba3",
+        "seconds": 1.046
+      }
+    ]
+  }
+}

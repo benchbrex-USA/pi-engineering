@@ -1,0 +1,22 @@
+# Local execution state and credentials
+.pi-engineering/
+.pi/
+.pi-restore-in-progress
+.pi-restore-*/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Installed dependencies and generated build caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
