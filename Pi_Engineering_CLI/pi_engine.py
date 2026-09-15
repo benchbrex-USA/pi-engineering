@@ -244,6 +244,7 @@ class Engine:
                 self.checkpoint(task, "complete")
                 return
             prepared = []
+            skipped_repeats = 0
             for item in calls:
                 if not isinstance(item, dict) or not isinstance(item.get("function"), dict):
                     raise UserError("Model returned malformed tool calls")
@@ -257,11 +258,30 @@ class Engine:
                 matches = [index for index, c in enumerate(history) if c["hash"] == call["hash"]]
                 if matches and (not (call["read"] or call["name"] == "workspace_check") or not any(
                         not c["read"] and c["status"] == "done" for c in history[matches[-1] + 1:])):
-                    raise UserError("Repeated identical action stopped: no new progress")
+                    # Do not kill the task; identical no-progress calls are dropped.
+                    skipped_repeats += 1
+                    continue
                 prepared.append(call)
+            if not prepared:
+                task["messages"].append(response)
+                if response.get("content", "").strip() and skipped_repeats:
+                    task["answer"] = response["content"]
+                    task["status"] = completion_status(task)
+                    self.checkpoint(task, "complete")
+                    return
+                task["messages"].append({
+                    "role": "user",
+                    "content": (
+                        "Identical tool calls were rejected because they add no new progress. "
+                        "Provide your final answer now using evidence already observed. "
+                        "Do not repeat prior tool calls."
+                    ),
+                })
+                self.workspace.record(task, "proposal", {"count": 0, "skipped_repeats": skipped_repeats})
+                continue
             task["messages"].append(response)
             task["calls"].extend(prepared)
-            self.workspace.record(task, "proposal", {"count": len(prepared)})
+            self.workspace.record(task, "proposal", {"count": len(prepared), "skipped_repeats": skipped_repeats})
 
     def reject(self, task_id):
         with self.workspace.lock(task_id):
