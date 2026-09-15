@@ -117,6 +117,45 @@ class CodexModel:
 
 
 
+
+def openai_messages(messages):
+    """Project Pi transcript messages into OpenAI/xAI Chat Completions shape."""
+    projected = []
+    pending_ids = []
+    for message in messages:
+        role = message.get("role")
+        if role == "assistant" and message.get("tool_calls"):
+            converted = []
+            pending_ids = []
+            for index, call in enumerate(message["tool_calls"]):
+                function = call.get("function") or {}
+                call_id = call.get("id") or f"call_{index}"
+                pending_ids.append(call_id)
+                arguments = function.get("arguments", {})
+                if not isinstance(arguments, str):
+                    arguments = json.dumps(arguments)
+                converted.append({
+                    "id": call_id,
+                    "type": "function",
+                    "function": {"name": function.get("name", ""), "arguments": arguments},
+                })
+            projected.append({
+                "role": "assistant",
+                "content": message.get("content") or "",
+                "tool_calls": converted,
+            })
+        elif role == "tool":
+            call_id = message.get("tool_call_id") or (pending_ids.pop(0) if pending_ids else "call_0")
+            projected.append({
+                "role": "tool",
+                "tool_call_id": call_id,
+                "content": message.get("content") or "",
+            })
+        else:
+            projected.append({"role": role, "content": message.get("content") or ""})
+    return projected
+
+
 class OpenAICompatModel:
     """OpenAI-compatible Chat Completions (xAI Grok, OpenAI, local gateways)."""
 
@@ -168,7 +207,7 @@ class OpenAICompatModel:
         url = endpoint + ("/chat" if endpoint.endswith("/api") else "/chat/completions")
         payload = {
             "model": self.settings.model,
-            "messages": messages,
+            "messages": openai_messages(messages),
             "stream": False,
             "max_tokens": self.settings.output_tokens,
         }
@@ -179,7 +218,11 @@ class OpenAICompatModel:
         try:
             async with httpx.AsyncClient(timeout=self.settings.timeout, follow_redirects=False, trust_env=False) as client:
                 response = await client.post(url, json=payload, headers=headers)
-                response.raise_for_status()
+                if response.status_code >= 400:
+                    detail = response.text[:300].replace("\n", " ")
+                    raise UserError(
+                        f"Model endpoint returned HTTP {response.status_code}. {detail}"
+                    )
                 if len(response.content) > 1000000:
                     raise UserError("Model response exceeded the 1 MB limit")
                 value = response.json()
@@ -193,10 +236,13 @@ class OpenAICompatModel:
                 arguments = function.get("arguments") or "{}"
                 if isinstance(arguments, str):
                     arguments = json.loads(arguments)
-                tool_calls.append({"function": {"name": function.get("name", ""), "arguments": arguments}})
+                item = {"function": {"name": function.get("name", ""), "arguments": arguments}}
+                if isinstance(call.get("id"), str) and call["id"]:
+                    item["id"] = call["id"]
+                tool_calls.append(item)
             return {"role": "assistant", "content": content, "tool_calls": tool_calls}
-        except httpx.HTTPStatusError as exc:
-            raise UserError(f"Model endpoint returned HTTP {exc.response.status_code}. Check model and credentials.") from exc
+        except UserError:
+            raise
         except httpx.HTTPError as exc:
             raise UserError("Cannot reach the model endpoint. Check model configuration and service availability.") from exc
         except (ValueError, KeyError, TypeError) as exc:
