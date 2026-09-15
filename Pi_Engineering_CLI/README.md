@@ -371,3 +371,10 @@ The installer applies `requirements.lock` for reproducible runtime versions.
 The lock was tested on macOS arm64; Intel Macs may require a source build of
 cryptography and are not qualified by this release. `SECURITY.md` describes the
 security boundary, automated checks and customer acceptance procedure.
+
+## Production engineering
+
+Full system audit, production definition of done, workstreams, and implementation prompts:
+
+- [docs/PRODUCTION_ENGINEERING_SPEC.md](docs/PRODUCTION_ENGINEERING_SPEC.md)
+- [docs/ENGINEERING_PROMPTS.md](docs/ENGINEERING_PROMPTS.md)
