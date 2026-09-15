@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import time
 import uuid
 
 from pi_tools import OllamaModel, ToolBroker, file_path, read_file
 from pi_models import make_model
-from pi_workspace import UserError, canonical, fingerprint
+from pi_workspace import UserError, LockBusy, ResourceBusy, canonical, fingerprint
 
 
 GRAPH = {
@@ -53,7 +54,8 @@ class Engine:
             raise UserError(f"Illegal graph transition: {previous} -> {node}")
         task["node"] = node
         self.workspace.record(task, node, details)
-        self.event(node, details)
+        self.event(node, dict(details, task_id=task["id"], agent=task["agent"],
+                              status=task["status"], steps=task["steps"]))
 
     async def start(self, request, agent="engineer"):
         settings = self.config.agents.get(agent)
@@ -80,7 +82,7 @@ class Engine:
             task["calls"] = [self.make_call(broker, name, arguments)]
             self.checkpoint(task, "policy")
             task["status"] = "awaiting_approval"
-            self.checkpoint(task, "review")
+            self.checkpoint(task, "review", tool=name)
             return task
 
     def make_call(self, broker, name, arguments):
@@ -104,12 +106,19 @@ class Engine:
         return call
 
     async def advance(self, task_id, approval=None):
-        with self.workspace.lock(task_id):
+        with self.workspace.lock(task_id), contextlib.ExitStack() as resource_locks:
             task = self.workspace.task(task_id)
+            if "workflow_binding" in task and task["workflow_binding"].get("workspace_hash") != fingerprint(str(self.workspace.root)):
+                raise UserError("Workflow task belongs to a different workspace; do not replay this checkpoint")
             if task["status"] in {"completed", "rejected", "unresolved", "failed", "budget_exhausted", "verification_failed"}:
                 return task
             if task["agent"] not in self.config.agents or task["config_hash"] != configuration_hash(self.config, task["agent"]):
                 raise UserError("Configuration changed since this task started. Create a new task for review.")
+            for resource in sorted(task.get("workflow_resources", [])):
+                try:
+                    resource_locks.enter_context(self.workspace.lock("resource_" + fingerprint(resource)))
+                except LockBusy as exc:
+                    raise ResourceBusy("Workflow resource is busy: " + resource + ". Retry after its owner finishes.") from exc
             settings = self.config.agents[task["agent"]]
             if any(c["status"] == "executing" for c in task["calls"]):
                 task["status"] = "unresolved"
@@ -153,6 +162,8 @@ class Engine:
             finally:
                 task["elapsed"] += time.monotonic() - started
                 self.workspace.record(task, "checkpoint")
+                self.event("settled", {"task_id": task["id"], "agent": task["agent"],
+                                      "status": task["status"], "steps": task["steps"]})
             return task
 
     async def walk(self, task, settings, broker, model):
@@ -214,6 +225,8 @@ class Engine:
                 self.checkpoint(task, "propose", agent=task["agent"])
             task["steps"] += 1
             self.workspace.record(task, "model_started", {"step": task["steps"]})
+            self.event("model_started", {"task_id": task["id"], "agent": task["agent"],
+                                         "status": task["status"], "steps": task["steps"]})
             response = await model.chat(task["messages"], list(broker.tools.values()))
             calls = response.get("tool_calls", [])
             if not isinstance(calls, list) or len(calls) > 16:

@@ -1,0 +1,10 @@
+{
+  "kind": "development-task-graph",
+  "version": 1,
+  "nodes": [
+    {"id": "baseline", "objective": "Map execution and reproduce wave barrier", "dependencies": [], "acceptance": "Repository contract and regression/timing baseline recorded", "status": "complete", "evidence": ["GRAPH_UPGRADE.md", "tests/benchmark_workflow.py"], "notes": "65 baseline tests passed; five-trial median 0.4419705 seconds"},
+    {"id": "runtime", "objective": "Ship validated completion-driven resource-aware scheduling", "dependencies": ["baseline"], "acceptance": "Admission, cancellation, resources and resume-binding tests pass", "status": "complete", "evidence": ["pi_workflow.py", "tests/test_graph_scheduler.py", "GRAPH_VERIFICATION.md"], "notes": "21 focused tests passed; resource ownership, cancellation and manual cross-workspace approval paths covered"},
+    {"id": "experience", "objective": "Expose offline validation and blocker navigation", "dependencies": ["runtime"], "acceptance": "JSON and terminal paths work without model/tool calls", "status": "complete", "evidence": ["tests/test_graph_scheduler.py", "GRAPH_VERIFICATION.md"], "notes": "Offline JSON tests passed; 40/100-column renders inspected"},
+    {"id": "qualification", "objective": "Verify and package coherent release", "dependencies": ["runtime", "experience"], "acceptance": "Regression, adversarial, timing, build and installed checks recorded", "status": "complete", "evidence": ["GRAPH_VERIFICATION.md", "reports/security-static.json", "tests/check_distribution.py"], "notes": "86 source tests, 76 extracted product tests, installed acceptance and final source comparison passed. No production/customer qualification inference"}
+  ]
+}
