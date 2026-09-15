@@ -205,6 +205,9 @@ A release may be called **production-ready v1.0.0** only when **all** are true:
 - Keep Rich markup never evaluating untrusted text.
 
 ### WS2 — Engine/workflow productionization
+
+> Full graph engineering specification + implementation prompts: [GRAPH_ENGINEERING_SPEC.md](GRAPH_ENGINEERING_SPEC.md)
+
 - Stabilize completion-driven scheduler as the sole workflow runtime.
 - Document resource lock semantics and failure modes.
 - Guarantee `--validate` / `--explain` never call models/tools.

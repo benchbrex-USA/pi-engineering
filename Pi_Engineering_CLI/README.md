@@ -378,3 +378,4 @@ Full system audit, production definition of done, workstreams, and implementatio
 
 - [docs/PRODUCTION_ENGINEERING_SPEC.md](docs/PRODUCTION_ENGINEERING_SPEC.md)
 - [docs/ENGINEERING_PROMPTS.md](docs/ENGINEERING_PROMPTS.md)
+- [docs/GRAPH_ENGINEERING_SPEC.md](docs/GRAPH_ENGINEERING_SPEC.md) — graph/DAG production spec + master prompt

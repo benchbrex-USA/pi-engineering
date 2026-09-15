@@ -86,6 +86,12 @@ UI must stay the same. Success: tests + manual smoke with grok-4.6 and a fake co
 
 ---
 
+## Prompt Graph — Master graph engineering assignment
+
+Use the full specification + master prompt in
+[`GRAPH_ENGINEERING_SPEC.md`](GRAPH_ENGINEERING_SPEC.md) §7 (plus satellite prompts §8).
+That document supersedes the short Prompt E sketch for graph production work.
+
 ## Prompt E — Workflow scheduler production seal
 
 ```
