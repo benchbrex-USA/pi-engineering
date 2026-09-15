@@ -1,0 +1,67 @@
+{
+  "name": "developer",
+  "audience": "Software engineers shipping product changes",
+  "description": "Implementation-first agents with review and verification checks.",
+  "model_hint": {
+    "provider": "grok",
+    "model": "grok-4.6"
+  },
+  "agents": {
+    "engineer": {
+      "role": "Implement the requested change using evidence and permitted tools. Prefer small verified edits.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "workspace_write",
+        "workspace_check",
+        "knowledge_search",
+        "memory_search"
+      ],
+      "enabled": true,
+      "max_steps": 24,
+      "deadline_seconds": 900
+    },
+    "reviewer": {
+      "role": "Review evidence for defects and unmet criteria. Cite concrete findings; do not modify files.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "knowledge_search",
+        "memory_search",
+        "workspace_check"
+      ],
+      "enabled": true,
+      "max_steps": 16,
+      "deadline_seconds": 900
+    },
+    "researcher": {
+      "role": "Research the codebase and cite file evidence before implementation choices.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "knowledge_search",
+        "memory_search"
+      ],
+      "enabled": true,
+      "max_steps": 16,
+      "deadline_seconds": 900
+    }
+  },
+  "checks": {
+    "lint": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "typecheck": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "test": [
+      "npm",
+      "test"
+    ]
+  },
+  "default_workflow": "workflows/implement-review.json"
+}

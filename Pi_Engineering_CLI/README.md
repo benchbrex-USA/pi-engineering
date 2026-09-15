@@ -19,15 +19,31 @@ script. `install.sh` installs pinned dependencies there, checks compatibility an
 updates only a recognized Pi symlink; system Python packages remain unchanged.
 Rerun it after source updates. The Python package is the portable installation.
 
+## Persona profiles
+
+Apply an audience preset without wiping your workspace:
+
+```sh
+pi-engineering profile list
+pi-engineering profile show developer
+pi-engineering profile apply developer
+pi-engineering profile apply hacker --replace-agents
+pi-engineering recipe export --json
+pi-engineering workflow workflows/implement-review.json --validate --json
+```
+
+Supported built-in profiles: `developer`, `hacker`, `cto`.
+
 ## Connect a model
 
-Pi supports an authenticated Codex CLI or Ollama's real chat/tool API. On this
+Pi supports Grok (login or `XAI_API_KEY`), an authenticated Codex CLI, or Ollama's real chat/tool API. On this
 Mac, Codex is configured and live acceptance checks passed using its existing
 ChatGPT login. No credentials are copied into Pi configuration.
 
 ```sh
 pi-engineering setup
-pi-engineering model set default --provider codex
+pi-engineering model set grok-4.6 --provider grok
+# or: pi-engineering model set default --provider codex
 pi-engineering doctor
 pi-engineering workspace use /path/to/project
 pi-engineering
@@ -53,8 +69,9 @@ For a protected HTTPS Ollama endpoint, use `--token-env ENVIRONMENT_VARIABLE`.
 Only the environment variable name is saved. Do not place secrets in command
 arguments, server URLs, task prompts or committed configuration files.
 
-In the session, type a task in ordinary language. `/help` lists actions; Tab
-completes command names, arrow keys recall session input, Ctrl-C interrupts the
+In the session, type a task in ordinary language. `/help` lists actions; Ctrl-P
+opens searchable commands, Tab and arrow keys select completions, arrow keys
+recall session input, and `/review` opens the latest pending action. Ctrl-C interrupts the
 active task, and `/quit` exits. The screen stays in terminal scrollback.
 
 ```sh
@@ -163,6 +180,42 @@ with the desired role and complete tool list.
 Re-running the same file resumes its saved graph without replaying completed
 nodes. A changed plan or different absolute filename identifies a new graph.
 After approving a paused node, run the workflow command again to continue.
+
+Version 0.5 schedules as each task finishes: unrelated slow or approval-paused
+branches no longer hold back ready dependents. Every join still requires all
+prerequisites to succeed. Completed processing does not override failed checks.
+
+```sh
+pi-engineering workflow workflows/review.json --validate --json
+pi-engineering workflow workflows/review.json
+pi-engineering workflow workflows/review.json --explain
+```
+
+Validation and explanation are offline: no inference, MCP discovery or tool
+dispatch. Explain includes revision, task IDs, blockers and next actions, without
+task prompts or tool payloads. Its workflow status is the last saved scheduler
+snapshot; task statuses are current. Run again after approving a task to refresh
+the workflow outcome. JSON success output stays on stdout, errors on stderr;
+failed/unknown/exhausted/rejected/interrupted outcomes return 1, pending review
+returns 0 (preserved behavior), and Ctrl-C returns 130.
+
+Plans with `"version": 2` can add node `priority` (-100 to 100, higher first)
+and `resources` (exclusive named resources). Equal priorities sort by node name.
+Declare the same resource on tasks that must not overlap, e.g. `"resources":
+["repo:working-tree"]`. These are scheduling constraints, not new permissions.
+Locks cover participating local tasks and manual approval/resume, not unrelated
+programs or undeclared remote conflicts. External lock contention stops that
+node's dispatch for this invocation; `--explain` gives the retry action.
+
+Checkpoint schema 2 binds workspace location, plan revision and each task;
+configuration drift refuses reuse, including completed nodes. Valid v1 records
+upgrade automatically without changing their flow ID. No SQL data is deleted.
+Moving a workspace intentionally requires a new graph revision/path; completed
+records remain inspectable. Old releases do not enforce new resource semantics:
+do not use them to resume v2 tasks. To roll back the package, stop active work,
+retain state and install the retained 0.4.0 wheel, then use a fresh workspace and
+v1 plans only. Do not downgrade or strip metadata on existing checkpoints.
+See GRAPH_UPGRADE.md and GRAPH_VERIFICATION.md for scope, evidence and backlog.
 
 ## Approval and recovery
 
@@ -292,7 +345,7 @@ MCP SDK subprocess transport, permission enforcement, exact approval, restart,
 no-replay behavior, file conflicts, cycle detection and terminal widths.
 Legacy tests separately preserve the old teaching runtime behavior.
 
-Version 0.3.2 includes live-model acceptance, public external MCP acceptance,
+Version 0.5.0 adds completion-driven graph scheduling and offline inspection to the live terminal interface, live-model acceptance, public external MCP acceptance,
 parallel graph execution, memory/retrieval and encrypted recovery evidence. See
 `VERIFICATION.md` and `reports/` for measured results and remaining gates.
 Customer-specific integrations, representative-user testing and independent

@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "concurrency": 2,
+  "nodes": {
+    "inspect": {
+      "agent": "researcher",
+      "task": "Inspect the workspace files and relevant project metadata. Report the entry points and observed architecture, citing actual file evidence.",
+      "priority": 10,
+      "resources": ["repo:working-tree"]
+    },
+    "review": {
+      "agent": "reviewer",
+      "task": "Review the upstream findings against available file evidence. Report concrete risks and missing verification; do not claim tests were run unless observed.",
+      "depends_on": ["inspect"],
+      "resources": ["repo:working-tree"]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "concurrency": 2,
+  "nodes": {
+    "status": {
+      "agent": "researcher",
+      "task": "Summarize repository readiness: recent changes, known risks, and available verification commands from project docs.",
+      "priority": 20,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "gate-review": {
+      "agent": "reviewer",
+      "task": "Release-gate review: blockers, missing tests, rollback risks, and operational readiness. Do not modify files.",
+      "depends_on": [
+        "status"
+      ],
+      "priority": 10,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "metrics-note": {
+      "agent": "engineer",
+      "task": "Produce a short release note of verification performed and limitations. Use checks/metrics tools when available; do not invent pass results.",
+      "depends_on": [
+        "gate-review"
+      ],
+      "priority": 5,
+      "resources": [
+        "repo:working-tree"
+      ]
+    }
+  }
+}

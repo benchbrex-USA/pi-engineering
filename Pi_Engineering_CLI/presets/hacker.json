@@ -1,0 +1,71 @@
+{
+  "name": "hacker",
+  "audience": "Security researchers and offensive/defensive engineers",
+  "description": "Threat-focused review with strict read defaults and security workflow.",
+  "model_hint": {
+    "provider": "grok",
+    "model": "grok-4.6"
+  },
+  "agents": {
+    "engineer": {
+      "role": "Investigate and harden the system. Prefer evidence-backed findings; never invent vulnerabilities.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "workspace_write",
+        "workspace_check",
+        "knowledge_search",
+        "memory_search"
+      ],
+      "enabled": true,
+      "max_steps": 24,
+      "deadline_seconds": 1200
+    },
+    "reviewer": {
+      "role": "Adversarial security review. Flag injection, authz gaps, secret leakage, and unsafe tool grants. Do not modify files.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "knowledge_search",
+        "memory_search"
+      ],
+      "enabled": true,
+      "max_steps": 20,
+      "deadline_seconds": 1200
+    },
+    "researcher": {
+      "role": "Map attack surface from repository evidence and public docs via permitted MCP tools only.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "knowledge_search",
+        "memory_search",
+        "deepwiki__read_wiki_structure",
+        "deepwiki__read_wiki_contents",
+        "deepwiki__ask_question"
+      ],
+      "enabled": true,
+      "max_steps": 20,
+      "deadline_seconds": 1200
+    }
+  },
+  "checks": {
+    "security-static": [
+      "python3",
+      "-m",
+      "bandit",
+      "-r",
+      ".",
+      "-q"
+    ],
+    "deps-audit": [
+      "python3",
+      "-m",
+      "pip_audit",
+      ".",
+      "--progress-spinner",
+      "off"
+    ]
+  },
+  "default_workflow": "workflows/security-pass.json"
+}

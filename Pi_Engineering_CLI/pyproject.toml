@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pi-engineering"
-version = "0.3.2"
-description = "Graph-based agent tasks and governed MCP tools in the terminal"
+version = "0.6.0"
+description = "Powerful terminal platform for governed agent work: graph tasks, MCP tools, personas"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -16,10 +16,15 @@ dependencies = [
   "jsonschema==4.26.0",
   "cryptography==50.0.1",
   "pypdf==6.16.1",
+  "prompt-toolkit==3.0.52",
 ]
 
 [project.scripts]
 pi-engineering = "pi_app:main"
 
 [tool.setuptools]
-py-modules = ["pi_app", "pi_workspace", "pi_engine", "pi_tools", "pi_terminal", "pi_workflow", "pi_server", "pi_models", "pi_knowledge", "pi_operations", "pi_qualification"]
+py-modules = ["pi_app", "pi_workspace", "pi_engine", "pi_tools", "pi_terminal", "pi_workflow", "pi_server", "pi_models", "pi_knowledge", "pi_operations", "pi_qualification", "pi_live", "pi_prompt", "pi_profile"]
+
+
+[tool.setuptools.package-data]
+"*" = ["presets/*.json", "workflows/*.json"]

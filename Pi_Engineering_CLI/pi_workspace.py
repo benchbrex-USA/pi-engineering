@@ -18,7 +18,7 @@ import uuid
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 
 
 def active_workspace():

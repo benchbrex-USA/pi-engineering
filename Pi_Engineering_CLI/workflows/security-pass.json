@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "concurrency": 2,
+  "nodes": {
+    "surface": {
+      "agent": "researcher",
+      "task": "Map the attack surface from repository evidence. List trust boundaries, auth paths, and high-risk modules with citations.",
+      "priority": 20,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "adversarial-review": {
+      "agent": "reviewer",
+      "task": "Perform an adversarial review for injection, authz bypass, secret leakage, unsafe subprocess/shell, and over-privileged tools. Cite files.",
+      "depends_on": [
+        "surface"
+      ],
+      "priority": 10,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "harden": {
+      "agent": "engineer",
+      "task": "Apply the highest-confidence hardening fixes only where evidence is clear. Prefer small verified patches and registered security checks.",
+      "depends_on": [
+        "adversarial-review"
+      ],
+      "priority": 5,
+      "resources": [
+        "repo:working-tree",
+        "repo:write"
+      ]
+    }
+  }
+}

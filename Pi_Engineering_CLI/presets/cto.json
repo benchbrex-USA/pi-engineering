@@ -1,0 +1,58 @@
+{
+  "name": "cto",
+  "audience": "Engineering leaders and technical decision-makers",
+  "description": "Governance-first: qualification, release gates, explainable workflows, metrics.",
+  "model_hint": {
+    "provider": "grok",
+    "model": "grok-4.6"
+  },
+  "agents": {
+    "engineer": {
+      "role": "Deliver durable engineering outcomes with verification, receipts, and clear limitations.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "workspace_write",
+        "workspace_check",
+        "knowledge_search",
+        "memory_search"
+      ],
+      "enabled": true,
+      "max_steps": 20,
+      "deadline_seconds": 900
+    },
+    "reviewer": {
+      "role": "Executive technical review: risks, missing verification, rollout concerns. Cite evidence; do not modify files.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "knowledge_search",
+        "memory_search",
+        "workspace_check"
+      ],
+      "enabled": true,
+      "max_steps": 16,
+      "deadline_seconds": 900
+    },
+    "researcher": {
+      "role": "Synthesize architecture and operational evidence for decision support.",
+      "tools": [
+        "workspace_files",
+        "workspace_read",
+        "knowledge_search",
+        "memory_search"
+      ],
+      "enabled": true,
+      "max_steps": 16,
+      "deadline_seconds": 900
+    }
+  },
+  "checks": {
+    "doctor": [
+      "pi-engineering",
+      "doctor",
+      "--plain"
+    ]
+  },
+  "default_workflow": "workflows/release-gate.json"
+}

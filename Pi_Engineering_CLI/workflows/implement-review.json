@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "concurrency": 2,
+  "nodes": {
+    "inspect": {
+      "agent": "researcher",
+      "task": "Inspect the workspace and cite entry points and constraints relevant to the user goal.",
+      "priority": 20,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "implement": {
+      "agent": "engineer",
+      "task": "Implement the requested change with minimal verified edits. Use registered checks when available.",
+      "depends_on": [
+        "inspect"
+      ],
+      "priority": 10,
+      "resources": [
+        "repo:working-tree",
+        "repo:write"
+      ]
+    },
+    "review": {
+      "agent": "reviewer",
+      "task": "Review the change against evidence. Report defects and missing verification; do not modify files.",
+      "depends_on": [
+        "implement"
+      ],
+      "priority": 5,
+      "resources": [
+        "repo:working-tree"
+      ]
+    }
+  }
+}

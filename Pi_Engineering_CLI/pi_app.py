@@ -111,6 +111,17 @@ def parser():
     s.add_argument("name")
     s.add_argument("--command", dest="check_command", required=True)
     s.add_argument("--arg", action="append", default=[])
+    profile = sub.add_parser("profile").add_subparsers(dest="operation", required=True)
+    profile.add_parser("list")
+    s = profile.add_parser("show")
+    s.add_argument("name")
+    s = profile.add_parser("apply")
+    s.add_argument("name")
+    s.add_argument("--replace-agents", action="store_true",
+                   help="Overlay preset agents/checks onto existing names (servers still preserved)")
+    recipe = sub.add_parser("recipe").add_subparsers(dest="operation", required=True)
+    recipe.add_parser("export")
+
     def globals_after_command(current):
         for action in list(current._actions):
             if isinstance(action, argparse._SubParsersAction):
@@ -189,7 +200,7 @@ async def connection_checks(workspace, config):
 
 async def dispatch(args, workspace, terminal):
     labels = {"run": "Agent execution", "call": "Prepare action", "approve": "Approved execution",
-              "resume": "Resume checkpoint", "workflow": "Agent workflow", "doctor": "Connection checks",
+              "resume": "Resume checkpoint", "workflow": "Agent workflow", "profile": "Persona presets", "recipe": "Export shareable recipe", "doctor": "Connection checks",
               "tools": "Discover tools", "backup": "Encrypt backup", "restore": "Restore workspace"}
     label = labels.get(args.command)
     if args.command == "workflow" and (args.validate or args.explain):
@@ -322,6 +333,25 @@ async def _dispatch(args, workspace, terminal):
             config.checks[args.name] = [args.check_command, *args.arg]
             workspace.save(config)
         return config.checks
+    if command == "profile":
+        from pi_profile import apply_preset, list_presets, load_preset
+        if args.operation == "list":
+            rows = []
+            for name, path in list_presets().items():
+                data, _ = load_preset(name)
+                rows.append({"name": name, "audience": data.get("audience", ""),
+                             "description": data.get("description", ""), "path": str(path)})
+            return rows
+        if args.operation == "show":
+            data, path = load_preset(args.name)
+            return {**data, "path": str(path)}
+        config, applied = apply_preset(config, args.name, replace_agents=getattr(args, "replace_agents", False))
+        workspace.save(config)
+        return applied
+    if command == "recipe":
+        from pi_profile import export_recipe
+        if args.operation == "export":
+            return export_recipe(config)
     raise UserError("Unknown command. Use --help for available commands.")
 
 
