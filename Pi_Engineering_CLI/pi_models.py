@@ -162,7 +162,7 @@ class OpenAICompatModel:
     async def chat(self, messages, tools):
         import httpx
         if not self.settings.model:
-            raise UserError("No model configured. Run: pi-engineering model set grok-4.6 --provider grok")
+            raise UserError("No model configured. Run: pi-engineering brain set MODEL --provider compat --endpoint URL")
         headers = {"Authorization": "Bearer " + self._token(), "Content-Type": "application/json"}
         endpoint = self.settings.endpoint.rstrip("/")
         url = endpoint + ("/chat" if endpoint.endswith("/api") else "/chat/completions")
@@ -206,6 +206,6 @@ class OpenAICompatModel:
 def make_model(settings):
     if settings.provider == "codex":
         return CodexModel(settings)
-    if settings.provider in {"openai", "grok"}:
+    if settings.provider in {"openai", "grok", "compat"}:
         return OpenAICompatModel(settings)
     return OllamaModel(settings)

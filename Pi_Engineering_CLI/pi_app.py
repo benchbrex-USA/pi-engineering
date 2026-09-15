@@ -33,19 +33,36 @@ def parser():
     m = sub.add_parser("model").add_subparsers(dest="operation", required=True)
     s = m.add_parser("set")
     s.add_argument("model")
-    s.add_argument("--provider", choices=["ollama", "codex", "openai", "grok"], default="ollama")
+    s.add_argument("--provider", choices=["ollama", "codex", "openai", "grok", "compat"], default="ollama")
     s.add_argument("--endpoint", default="http://127.0.0.1:11434")
     s.add_argument("--token-env", default="")
+    s.add_argument("--timeout", type=int, default=None)
+    s.add_argument("--context-chars", type=int, default=None)
+    s.add_argument("--output-tokens", type=int, default=None)
     m.add_parser("show")
+    brain = sub.add_parser("brain").add_subparsers(dest="operation", required=True)
+    brain.add_parser("show")
+    bs = brain.add_parser("set")
+    bs.add_argument("model", help="Any model id your endpoint accepts — Pi does not gate model names")
+    bs.add_argument("--provider", choices=["ollama", "codex", "openai", "grok", "compat"], default="compat")
+    bs.add_argument("--endpoint", default="https://api.x.ai/v1")
+    bs.add_argument("--token-env", default="XAI_API_KEY")
+    bs.add_argument("--timeout", type=int, default=300)
+    bs.add_argument("--context-chars", type=int, default=500000)
+    bs.add_argument("--output-tokens", type=int, default=16384)
+    bs.add_argument("--agent-steps", type=int, default=128, help="Raise engineer max_steps for long autonomous runs")
+    bs.add_argument("--agent-deadline", type=int, default=7200, help="Raise engineer deadline_seconds")
+    brain.add_parser("open", help="Show how open-brain mode works")
     a = sub.add_parser("agent").add_subparsers(dest="operation", required=True)
     a.add_parser("list")
     s = a.add_parser("set")
     s.add_argument("name")
     s.add_argument("--role", required=True)
     s.add_argument("--tools", nargs="*", default=["workspace_files", "workspace_read"])
-    s.add_argument("--max-steps", type=int, default=16)
+    s.add_argument("--max-steps", type=int, default=32)
+    s.add_argument("--deadline-seconds", type=int, default=1800)
     s.add_argument("--model")
-    s.add_argument("--provider", choices=["ollama", "codex", "openai", "grok"], default="ollama")
+    s.add_argument("--provider", choices=["ollama", "codex", "openai", "grok", "compat"], default="ollama")
     for name in ["enable", "disable"]:
         a.add_parser(name).add_argument("name")
     m = sub.add_parser("mcp").add_subparsers(dest="operation", required=True)
@@ -157,7 +174,7 @@ async def doctor(workspace):
             checks.append({"name": "Model", "ok": process.returncode == 0,
                            "detail": "Codex authenticated" if process.returncode == 0 else "Run codex login"})
             return checks + await connection_checks(workspace, config)
-        if config.model.provider in {"openai", "grok"}:
+        if config.model.provider in {"openai", "grok", "compat"}:
             from pi_models import OpenAICompatModel
             try:
                 token = OpenAICompatModel(config.model)._token()
@@ -233,22 +250,77 @@ async def _dispatch(args, workspace, terminal):
             workspace.save(config)
         return {"status": "configured", "workspace": str(workspace.root), "config": str(workspace.config_path),
                 "next": "model set MODEL --endpoint URL" if not config.model.model else "run YOUR_TASK"}
+    if command == "brain":
+        if args.operation == "open":
+            return {
+                "philosophy": "Pi scales with the brain you connect. Model ids and OpenAI-compatible endpoints are open.",
+                "authority": "Models only propose. Approvals, allowlists, and verification stay operator-controlled.",
+                "set": "pi-engineering brain set MODEL --provider compat --endpoint https://YOUR_HOST/v1 --token-env YOUR_KEY_ENV",
+                "ceilings": {
+                    "max_steps": 10000,
+                    "deadline_seconds": 86400,
+                    "context_chars": 8000000,
+                    "output_tokens": 200000,
+                    "timeout": 3600,
+                },
+            }
+        if args.operation == "show":
+            agent = config.agents.get("engineer")
+            return {
+                "brain": config.model.model_dump(),
+                "engineer_budget": {
+                    "max_steps": agent.max_steps if agent else None,
+                    "deadline_seconds": agent.deadline_seconds if agent else None,
+                },
+                "note": "Performance tracks model quality; raise budgets with brain set when the task needs a longer run.",
+            }
+        # brain set
+        endpoint, token_env = args.endpoint, args.token_env
+        if args.provider in {"grok", "compat"} and endpoint in {"", "http://127.0.0.1:11434"}:
+            endpoint = "https://api.x.ai/v1"
+        if args.provider == "grok" and not token_env:
+            token_env = "XAI_API_KEY"
+        if args.provider == "openai" and endpoint in {"", "http://127.0.0.1:11434"}:
+            endpoint = "https://api.openai.com/v1"
+        config.model = config.model.model_copy(update={
+            "provider": args.provider,
+            "model": args.model,
+            "endpoint": endpoint,
+            "token_env": token_env,
+            "timeout": args.timeout,
+            "context_chars": args.context_chars,
+            "output_tokens": args.output_tokens,
+        })
+        if "engineer" in config.agents:
+            config.agents["engineer"] = config.agents["engineer"].model_copy(update={
+                "max_steps": args.agent_steps,
+                "deadline_seconds": args.agent_deadline,
+            })
+        workspace.save(config)
+        return {"brain": config.model.model_dump(),
+                "engineer_budget": {"max_steps": args.agent_steps, "deadline_seconds": args.agent_deadline}}
+
     if command == "model":
         if args.operation == "set":
             endpoint, token_env = args.endpoint, args.token_env
-            if args.provider == "grok":
+            if args.provider in {"grok", "compat"}:
                 if endpoint in {"", "http://127.0.0.1:11434"}:
                     endpoint = "https://api.x.ai/v1"
-                if not token_env:
+                if not token_env and args.provider == "grok":
                     token_env = "XAI_API_KEY"
             elif args.provider == "openai" and endpoint in {"", "http://127.0.0.1:11434"}:
                 endpoint = "https://api.openai.com/v1"
-            config.model = config.model.model_copy(update={"provider": args.provider, "model": args.model, "endpoint": endpoint, "token_env": token_env})
+            update = {"provider": args.provider, "model": args.model, "endpoint": endpoint, "token_env": token_env}
+            for key, attr in (("timeout", "timeout"), ("context_chars", "context_chars"), ("output_tokens", "output_tokens")):
+                value = getattr(args, attr, None)
+                if value is not None:
+                    update[key] = value
+            config.model = config.model.model_copy(update=update)
             workspace.save(config)
         return config.model.model_dump()
     if command == "agent":
         if args.operation == "set":
-            config.agents[args.name] = AgentSettings(role=args.role, tools=args.tools, max_steps=args.max_steps)
+            config.agents[args.name] = AgentSettings(role=args.role, tools=args.tools, max_steps=args.max_steps, deadline_seconds=getattr(args, "deadline_seconds", 1800))
             if args.model:
                 from pi_workspace import ModelSettings
                 config.agents[args.name].model = ModelSettings(provider=args.provider, model=args.model)

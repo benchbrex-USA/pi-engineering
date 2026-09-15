@@ -18,8 +18,8 @@
         "memory_search"
       ],
       "enabled": true,
-      "max_steps": 24,
-      "deadline_seconds": 1200
+      "max_steps": 64,
+      "deadline_seconds": 3600
     },
     "reviewer": {
       "role": "Adversarial security review. Flag injection, authz gaps, secret leakage, and unsafe tool grants. Do not modify files.",
@@ -30,8 +30,8 @@
         "memory_search"
       ],
       "enabled": true,
-      "max_steps": 20,
-      "deadline_seconds": 1200
+      "max_steps": 64,
+      "deadline_seconds": 3600
     },
     "researcher": {
       "role": "Map attack surface from repository evidence and public docs via permitted MCP tools only.",
@@ -45,8 +45,8 @@
         "deepwiki__ask_question"
       ],
       "enabled": true,
-      "max_steps": 20,
-      "deadline_seconds": 1200
+      "max_steps": 64,
+      "deadline_seconds": 3600
     }
   },
   "checks": {

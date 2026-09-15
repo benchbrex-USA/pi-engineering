@@ -19,6 +19,16 @@ browser dashboard.
 Profiles **merge** into your workspace. Existing MCP servers and agents are
 preserved unless you pass `--replace-agents`.
 
+## Open brain
+
+Attach any powerful model — Grok, Codex, Ollama, or any OpenAI-compatible endpoint.
+Pi does not gate model IDs. Approvals and tool allowlists stay under your control.
+
+```sh
+pi-engineering brain set grok-4.6 --provider grok
+pi-engineering brain set YOUR_MODEL --provider compat --endpoint https://HOST/v1 --token-env KEY_ENV
+```
+
 ## Quick start
 
 ```sh

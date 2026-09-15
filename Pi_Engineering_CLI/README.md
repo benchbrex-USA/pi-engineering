@@ -19,6 +19,21 @@ script. `install.sh` installs pinned dependencies there, checks compatibility an
 updates only a recognized Pi symlink; system Python packages remain unchanged.
 Rerun it after source updates. The Python package is the portable installation.
 
+## Open brain
+
+Pi is an advanced agent whose performance scales with the model you attach.
+Model names are not allowlisted. Use any Codex login, Ollama tag, Grok id, or
+OpenAI-compatible endpoint (`--provider compat`).
+
+```sh
+pi-engineering brain open
+pi-engineering brain set grok-4.6 --provider grok
+pi-engineering brain set YOUR_MODEL --provider compat --endpoint https://YOUR_HOST/v1 --token-env YOUR_KEY_ENV
+pi-engineering brain show
+```
+
+Authority stays local: the brain proposes; you approve writes and grant tools.
+
 ## Persona profiles
 
 Apply an audience preset without wiping your workspace:

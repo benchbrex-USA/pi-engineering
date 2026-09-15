@@ -91,13 +91,13 @@ class StrictModel(BaseModel):
 
 
 class ModelSettings(StrictModel):
-    provider: Literal["ollama", "codex", "openai", "grok"] = "ollama"
+    provider: Literal["ollama", "codex", "openai", "grok", "compat"] = "ollama"
     endpoint: str = "http://127.0.0.1:11434"
     model: str = ""
     token_env: str = ""
-    timeout: int = Field(default=120, ge=1, le=600)
-    context_chars: int = Field(default=64000, ge=4000, le=1000000)
-    output_tokens: int = Field(default=4096, ge=128, le=32768)
+    timeout: int = Field(default=180, ge=1, le=3600)
+    context_chars: int = Field(default=200000, ge=4000, le=8000000)
+    output_tokens: int = Field(default=8192, ge=128, le=200000)
 
     _url = field_validator("endpoint")(valid_url)
 
@@ -122,8 +122,8 @@ class AgentSettings(StrictModel):
     role: str = "Complete the user's task using evidence and permitted tools."
     tools: list[str] = Field(default_factory=lambda: ["workspace_files", "workspace_read", "knowledge_search", "memory_search"])
     enabled: bool = True
-    max_steps: int = Field(default=16, ge=1, le=100)
-    deadline_seconds: int = Field(default=900, ge=10, le=7200)
+    max_steps: int = Field(default=32, ge=1, le=10000)
+    deadline_seconds: int = Field(default=1800, ge=10, le=86400)
     model: ModelSettings | None = None
 
 
@@ -133,7 +133,7 @@ class WorkspaceSettings(StrictModel):
     servers: dict[str, ServerSettings] = Field(default_factory=dict)
     checks: dict[str, list[str]] = Field(default_factory=dict)
     agents: dict[str, AgentSettings] = Field(default_factory=lambda: {
-        "engineer": AgentSettings(tools=["workspace_files", "workspace_read", "workspace_write", "workspace_check", "knowledge_search", "memory_search"]),
+        "engineer": AgentSettings(tools=["workspace_files", "workspace_read", "workspace_write", "workspace_check", "knowledge_search", "memory_search"], max_steps=64, deadline_seconds=3600),
         "researcher": AgentSettings(role="Research the task; cite tool observations and distinguish inference from evidence."),
         "reviewer": AgentSettings(role="Review evidence for defects and unmet criteria. Cite concrete findings; do not modify files."),
     })

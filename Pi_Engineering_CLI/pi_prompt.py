@@ -14,7 +14,8 @@ from pi_terminal import clean
 
 COMMANDS = {
     "/help": "Commands", "/setup": "Initialize workspace", "/model show": "Active model",
-    "/model set": "Configure model", "/mcp list": "MCP connections", "/mcp add": "Connect MCP server",
+    "/model set": "Configure model",
+    "/brain show": "Brain capacity", "/brain set": "Attach any open model", "/brain open": "Open-brain philosophy", "/mcp list": "MCP connections", "/mcp add": "Connect MCP server",
     "/mcp schema": "Inspect tool contract", "/mcp qualify": "Run integration contract",
     "/agents": "Agent permissions", "/agent": "Switch agent", "/agent set": "Configure agent",
     "/tools": "Available tools", "/runs": "Task history", "/show": "Task and action details",

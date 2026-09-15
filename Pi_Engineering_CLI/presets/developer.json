@@ -18,8 +18,8 @@
         "memory_search"
       ],
       "enabled": true,
-      "max_steps": 24,
-      "deadline_seconds": 900
+      "max_steps": 64,
+      "deadline_seconds": 3600
     },
     "reviewer": {
       "role": "Review evidence for defects and unmet criteria. Cite concrete findings; do not modify files.",
@@ -31,8 +31,8 @@
         "workspace_check"
       ],
       "enabled": true,
-      "max_steps": 16,
-      "deadline_seconds": 900
+      "max_steps": 64,
+      "deadline_seconds": 3600
     },
     "researcher": {
       "role": "Research the codebase and cite file evidence before implementation choices.",
@@ -43,8 +43,8 @@
         "memory_search"
       ],
       "enabled": true,
-      "max_steps": 16,
-      "deadline_seconds": 900
+      "max_steps": 64,
+      "deadline_seconds": 3600
     }
   },
   "checks": {
