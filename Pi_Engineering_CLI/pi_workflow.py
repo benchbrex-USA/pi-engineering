@@ -169,7 +169,8 @@ def inspect_workflow(workspace, path, explain=False):
     if compatibility not in {"not_checked", "compatible"}:
         for row in rows:
             row.update(ready=False, reason="incompatible_checkpoint", next_action="Use a new plan path/revision after reviewing configuration")
-    return {"kind": "workflow_inspection", "id": flow_id, "revision": fingerprint(plan.identity_data()),
+    return {"kind": "workflow_inspection", "inspection_schema": 1, "id": flow_id,
+            "revision": fingerprint(plan.identity_data()),
             "version": plan.version, "status": "failed" if compatibility not in {"not_checked", "compatible"} else flow["status"] if flow else "validated",
             "compatibility": compatibility, "offline": True, "concurrency": plan.concurrency, "nodes": rows}
 

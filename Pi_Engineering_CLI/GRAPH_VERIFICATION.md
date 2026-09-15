@@ -88,3 +88,47 @@ Existing customer-account and independent security/usability qualification gaps
 in VERIFICATION.md remain open. macOS tests here are not evidence of remote CI
 or Linux execution. Security scan is static and performed by the implementation
 agent, not an independent assessment.
+
+---
+
+## Production seal addendum (2026-09-15)
+
+Executed against the frozen graph tree on branch `feat/platform-0.6-presets`.
+
+### Commands
+```sh
+.venv/bin/python -m unittest tests.test_graph_scheduler tests.test_graph_production -v
+.venv/bin/pi-engineering workflow workflows/implement-review.json --validate --json
+```
+
+### Results
+| Gate | Result |
+| --- | --- |
+| test_graph_scheduler (21) | PASS |
+| test_graph_production (6) | PASS |
+| Workflow packs load | PASS |
+| Persona default workflows load | PASS |
+| inspection_schema=1 | PASS |
+| validate/explain side-effect proof | PASS |
+| Resume matrix (parent statuses) | PASS |
+| All-success join on budget exhaustion | PASS |
+| CI workflow added | `.github/workflows/pi-graph.yml` |
+
+### DoD G1–G10 (graph spec)
+| ID | Status |
+| --- | --- |
+| G1 graph tests + packs | PASS locally; CI file added (remote run depends on SCM) |
+| G2 tagged commit hygiene | PASS for graph ship set (frozen + sealed commits) |
+| G3 validate/explain side-effect free | PASS |
+| G4 completion-driven acceptance | PASS (existing suite) |
+| G5 resource locks | PASS (existing suite) |
+| G6 cross-workspace binding | PASS (existing suite) |
+| G7 unresolved no auto-retry | PASS (existing suite) |
+| G8 security boundary unchanged | PASS (no boundary edits) |
+| G9 CLI_DESIGN preserved | PASS (no design redesign) |
+| G10 verification refreshed | PASS (this addendum) |
+
+### Still out of graph scope / product-wide
+- Full-suite TUI width failures (3) remain a **product** P0, not graph-scheduler logic.
+- Remote CI execution requires GitHub remote access (previously unavailable from this machine).
+- P2 backlog unchanged: typed compilers, distributed workers, conditional DSL.

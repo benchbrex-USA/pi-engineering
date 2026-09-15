@@ -1,0 +1,49 @@
+name: Pi Graph
+
+on:
+  push:
+    paths:
+      - "Pi_Engineering_CLI/**"
+      - ".github/workflows/pi-graph.yml"
+  pull_request:
+    paths:
+      - "Pi_Engineering_CLI/**"
+      - ".github/workflows/pi-graph.yml"
+
+jobs:
+  graph:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: Pi_Engineering_CLI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -U pip
+          .venv/bin/python -m pip install -e .
+      - name: Graph unit tests
+        run: |
+          .venv/bin/python -m unittest tests.test_graph_scheduler tests.test_graph_production -v
+      - name: Validate workflow packs
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import tempfile, sys
+          sys.path.insert(0, ".")
+          from pi_workspace import Workspace
+          from pi_workflow import load_plan
+          with tempfile.TemporaryDirectory() as t:
+              ws = Workspace(t); cfg = ws.config()
+              for p in sorted(Path("workflows").glob("*.json")):
+                  load_plan(p, cfg)
+                  print("OK", p)
+          PY
