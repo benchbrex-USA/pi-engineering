@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "concurrency": 2,
+  "nodes": {
+    "map": {
+      "agent": "researcher",
+      "task": "Produce a production-risk map for this Pi Engineering CLI workspace only. Stay inside existing paths under the workspace root (for example README.md, VERIFICATION.md, CLI_DESIGN.md, SECURITY.md, pi_models.py, pi_engine.py, tests/, workflows/, docs/). Do not read paths outside this workspace such as ../.github. Use workspace_files then a few workspace_read calls, then write a clear final answer with top risks and file citations. Stop when you have enough evidence.",
+      "priority": 30,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "adversarial": {
+      "agent": "reviewer",
+      "task": "Challenge the map findings. Rank the top 5 release blockers with severity and cite files. Do not modify files. Finish with a concise ranked list.",
+      "depends_on": [
+        "map"
+      ],
+      "priority": 20,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "plan": {
+      "agent": "engineer",
+      "task": "Create docs/LIVE_PLATFORM_RUN_PLAN.md only (create docs/ if needed via write to docs/LIVE_PLATFORM_RUN_PLAN.md). Content: ordered remediation plan from prior evidence, test commands, and non-goals (no UI redesign, no deletions). Under 120 lines.",
+      "depends_on": [
+        "adversarial"
+      ],
+      "priority": 10,
+      "resources": [
+        "repo:working-tree",
+        "repo:write"
+      ]
+    }
+  }
+}

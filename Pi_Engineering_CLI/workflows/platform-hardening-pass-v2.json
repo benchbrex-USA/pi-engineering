@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "concurrency": 2,
+  "nodes": {
+    "map": {
+      "agent": "researcher",
+      "task": "Map Pi Engineering CLI production risks from repository evidence only. Focus on: (1) terminal width/overflow test failures, (2) graph/workflow packaging hygiene, (3) open-brain auth/provider paths, (4) anything that blocks a v1 local production release. Cite concrete file paths. Do not modify files. Use workspace_read on VERIFICATION.md and CLI_DESIGN.md before concluding.",
+      "priority": 30,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "adversarial": {
+      "agent": "reviewer",
+      "task": "Adversarial review of the researcher's findings. Challenge weak claims, note missing verification, and rank the top 5 release blockers with severity. Cite files. Do not modify files.",
+      "depends_on": [
+        "map"
+      ],
+      "priority": 20,
+      "resources": [
+        "repo:working-tree"
+      ]
+    },
+    "plan": {
+      "agent": "engineer",
+      "task": "Using only prior observations, write a concise production remediation plan into docs/LIVE_PLATFORM_RUN_PLAN.md with: ordered fixes, test commands, and explicit non-goals (no UI redesign, no deletions). Keep it under 120 lines. Use registered checks if helpful. Prefer one new markdown file only.",
+      "depends_on": [
+        "adversarial"
+      ],
+      "priority": 10,
+      "resources": [
+        "repo:working-tree",
+        "repo:write"
+      ]
+    }
+  }
+}

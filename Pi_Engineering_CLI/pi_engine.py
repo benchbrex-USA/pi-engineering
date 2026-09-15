@@ -201,7 +201,11 @@ class Engine:
                     raise UserError("Approval expired before dispatch; start a new task")
                 call["status"] = "executing"
                 self.checkpoint(task, "execute", tool=call["name"], call_id=call["id"])
-                result = await broker.call(call["name"], call["arguments"])
+                try:
+                    result = await broker.call(call["name"], call["arguments"])
+                except UserError as exc:
+                    # Recoverable tool failures are observations, not unknown side effects.
+                    result = {"ok": False, "error": str(exc), "tool": call["name"]}
                 call["result"] = result
                 call["status"] = "done"
                 call["receipt"] = {"id": "receipt_" + uuid.uuid4().hex[:16], "action_hash": call["hash"],
