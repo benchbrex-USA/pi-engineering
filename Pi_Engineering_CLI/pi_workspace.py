@@ -18,7 +18,7 @@ import uuid
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-VERSION = "0.3.2"
+VERSION = "0.5.0"
 
 
 def active_workspace():
@@ -57,6 +57,14 @@ class UserError(Exception):
     """An actionable error safe for the operator interface."""
 
 
+class LockBusy(UserError):
+    """A participating local process currently owns a requested lock."""
+
+
+class ResourceBusy(UserError):
+    """A declared workflow resource is currently owned by another task."""
+
+
 def canonical(value) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
@@ -83,7 +91,7 @@ class StrictModel(BaseModel):
 
 
 class ModelSettings(StrictModel):
-    provider: Literal["ollama", "codex"] = "ollama"
+    provider: Literal["ollama", "codex", "openai", "grok"] = "ollama"
     endpoint: str = "http://127.0.0.1:11434"
     model: str = ""
     token_env: str = ""
@@ -204,7 +212,7 @@ class Workspace:
             try:
                 fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError as exc:
-                raise UserError("This task is already running in another process") from exc
+                raise LockBusy("This task is already running in another process") from exc
             try:
                 yield
             finally:

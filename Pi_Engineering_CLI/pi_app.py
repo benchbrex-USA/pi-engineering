@@ -33,7 +33,7 @@ def parser():
     m = sub.add_parser("model").add_subparsers(dest="operation", required=True)
     s = m.add_parser("set")
     s.add_argument("model")
-    s.add_argument("--provider", choices=["ollama", "codex"], default="ollama")
+    s.add_argument("--provider", choices=["ollama", "codex", "openai", "grok"], default="ollama")
     s.add_argument("--endpoint", default="http://127.0.0.1:11434")
     s.add_argument("--token-env", default="")
     m.add_parser("show")
@@ -45,7 +45,7 @@ def parser():
     s.add_argument("--tools", nargs="*", default=["workspace_files", "workspace_read"])
     s.add_argument("--max-steps", type=int, default=16)
     s.add_argument("--model")
-    s.add_argument("--provider", choices=["ollama", "codex"], default="ollama")
+    s.add_argument("--provider", choices=["ollama", "codex", "openai", "grok"], default="ollama")
     for name in ["enable", "disable"]:
         a.add_parser(name).add_argument("name")
     m = sub.add_parser("mcp").add_subparsers(dest="operation", required=True)
@@ -79,6 +79,9 @@ def parser():
     s.add_argument("--evidence", required=True)
     s = sub.add_parser("workflow")
     s.add_argument("file", help="JSON task DAG")
+    mode = s.add_mutually_exclusive_group()
+    mode.add_argument("--validate", action="store_true", help="Validate graph offline; no tasks or inference")
+    mode.add_argument("--explain", action="store_true", help="Inspect saved node blockers without executing")
     knowledge = sub.add_parser("knowledge").add_subparsers(dest="operation", required=True)
     knowledge.add_parser("add").add_argument("path")
     knowledge.add_parser("list")
@@ -143,6 +146,17 @@ async def doctor(workspace):
             checks.append({"name": "Model", "ok": process.returncode == 0,
                            "detail": "Codex authenticated" if process.returncode == 0 else "Run codex login"})
             return checks + await connection_checks(workspace, config)
+        if config.model.provider in {"openai", "grok"}:
+            from pi_models import OpenAICompatModel
+            try:
+                token = OpenAICompatModel(config.model)._token()
+                ok = bool(token) and bool(config.model.model)
+                detail = f"{config.model.provider}/{config.model.model or '?'}" + (
+                    " (API key or grok login ready)" if ok else " — set model and API key or run grok login")
+            except Exception as exc:
+                ok, detail = False, str(exc)
+            checks.append({"name": "Model", "ok": ok, "detail": detail})
+            return checks + await connection_checks(workspace, config)
         headers = {}
         if config.model.token_env and os.environ.get(config.model.token_env):
             headers["Authorization"] = "Bearer " + os.environ[config.model.token_env]
@@ -174,6 +188,21 @@ async def connection_checks(workspace, config):
 
 
 async def dispatch(args, workspace, terminal):
+    labels = {"run": "Agent execution", "call": "Prepare action", "approve": "Approved execution",
+              "resume": "Resume checkpoint", "workflow": "Agent workflow", "doctor": "Connection checks",
+              "tools": "Discover tools", "backup": "Encrypt backup", "restore": "Restore workspace"}
+    label = labels.get(args.command)
+    if args.command == "workflow" and (args.validate or args.explain):
+        label = None
+    if not args.json and label:
+        with terminal.operation(label) as view:
+            result = await _dispatch(args, workspace, terminal)
+            view.finish(result)
+            return result
+    return await _dispatch(args, workspace, terminal)
+
+
+async def _dispatch(args, workspace, terminal):
     if args.command == "mcp" and args.operation == "qualify":
         from pi_qualification import qualify
         return await qualify(workspace, args.file)
@@ -195,7 +224,15 @@ async def dispatch(args, workspace, terminal):
                 "next": "model set MODEL --endpoint URL" if not config.model.model else "run YOUR_TASK"}
     if command == "model":
         if args.operation == "set":
-            config.model = config.model.model_copy(update={"provider": args.provider, "model": args.model, "endpoint": args.endpoint, "token_env": args.token_env})
+            endpoint, token_env = args.endpoint, args.token_env
+            if args.provider == "grok":
+                if endpoint in {"", "http://127.0.0.1:11434"}:
+                    endpoint = "https://api.x.ai/v1"
+                if not token_env:
+                    token_env = "XAI_API_KEY"
+            elif args.provider == "openai" and endpoint in {"", "http://127.0.0.1:11434"}:
+                endpoint = "https://api.openai.com/v1"
+            config.model = config.model.model_copy(update={"provider": args.provider, "model": args.model, "endpoint": endpoint, "token_env": token_env})
             workspace.save(config)
         return config.model.model_dump()
     if command == "agent":
@@ -233,8 +270,7 @@ async def dispatch(args, workspace, terminal):
     if command == "graph":
         return GRAPH
     if command == "run":
-        with terminal.busy("Working on your task") if not args.json else contextlib.nullcontext():
-            return await engine.start(args.request, args.agent)
+        return await engine.start(args.request, args.agent)
     if command == "call":
         return await engine.propose_tool(args.tool, json.loads(args.arguments), args.agent)
     if command in {"approve", "resume"}:
@@ -254,7 +290,9 @@ async def dispatch(args, workspace, terminal):
     if command == "doctor":
         return await doctor(workspace)
     if command == "workflow":
-        from pi_workflow import run_workflow
+        from pi_workflow import run_workflow, inspect_workflow
+        if args.validate or args.explain:
+            return inspect_workflow(workspace, Path(args.file), args.explain)
         return await run_workflow(workspace, Path(args.file), engine)
     if command in {"knowledge", "memory"}:
         from pi_knowledge import Knowledge
@@ -290,6 +328,29 @@ async def dispatch(args, workspace, terminal):
 def display(result, terminal, as_json=False, command=None):
     if as_json:
         print(json.dumps(result, indent=2, ensure_ascii=True))
+    elif command == "workflow":
+        from pi_live import status_label
+        terminal.row("INFO" if result["status"] == "validated" else status_label(result["status"]),
+                     "Workflow " + result["status"], result["id"])
+        if result.get("kind") == "workflow_inspection":
+            terminal.text("  Revision: " + result["revision"], "dim")
+            terminal.text("  Checkpoint: " + result["compatibility"], "dim")
+            for node in result["nodes"]:
+                terminal.row("INFO" if node["ready"] else "WARNING" if node["blockers"] else status_label(node["status"]),
+                             node["node"], node["reason"].replace("_", " "), level=1)
+                if node["task_id"]:
+                    terminal.text("    " + node["task_id"], "dim")
+                for blocker in node["blockers"]:
+                    terminal.text("    Needs " + blocker["node"] + ": " + blocker["status"], "dim")
+                if node["resources"]:
+                    terminal.text("    Exclusive: " + ", ".join(node["resources"]), "cyan")
+                if node["status"] != "completed":
+                    terminal.text("    " + node["next_action"], "cyan")
+        else:
+            for name, task_id in result["nodes"].items():
+                terminal.text("    " + name + "  " + task_id)
+            if result["status"] != "completed":
+                terminal.text("  Use workflow FILE --explain to inspect blockers", "cyan")
     elif command == "graph":
         terminal.text("  TASK EXECUTION", "bold")
         terminal.text("  Intake -> Context -> Propose -> Policy")
@@ -370,24 +431,19 @@ def display(result, terminal, as_json=False, command=None):
 
 
 def interactive(workspace, terminal):
-    import readline
+    from pi_prompt import Composer
     terminal.command_prefix = "/"
-    commands = ["/help", "/setup", "/model", "/mcp", "/agents", "/agent", "/tools", "/runs", "/show", "/approve", "/reject", "/resume", "/graph", "/doctor", "/knowledge", "/memory", "/metrics", "/backup", "/restore", "/check", "/workspace", "/workflow", "/quit"]
-    def complete(text, state):
-        matches = [name for name in commands if name.startswith(text)]
-        return matches[state] if state < len(matches) else None
-    readline.set_completer(complete)
-    readline.parse_and_bind("bind ^I rl_complete" if "libedit" in (readline.__doc__ or "") else "tab: complete")
+    composer = Composer(plain=terminal.plain or "NO_COLOR" in os.environ or os.environ.get("TERM") == "dumb")
     config = workspace.config()
     terminal.header(workspace, config)
     if not config.model.model:
         terminal.row("WARNING", "Connect a model", "/model set MODEL --endpoint URL")
-    terminal.text("  What would you like to work on?", "bold")
-    terminal.text("  /help  commands    /tools  connections    /runs  history", "dim")
+    terminal.text("  What are we building?", "bold #43e8f1")
+    terminal.text("  /help    /tools    /review    /runs", "dim")
     agent = "engineer"
     while True:
         try:
-            line = input(f"\n{agent} > ").strip()
+            line = composer.read(workspace, agent)
         except EOFError:
             return 0
         except KeyboardInterrupt:
@@ -399,6 +455,13 @@ def interactive(workspace, terminal):
             return 0
         if line == "/help":
             terminal.help()
+            continue
+        if line == "/review":
+            pending = next((task for task in workspace.runs() if task["status"] == "awaiting_approval"), None)
+            if pending:
+                terminal.task(pending)
+            else:
+                terminal.row("INFO", "No actions awaiting review")
             continue
         if line.startswith("/agent ") and len(line.split()) == 2:
             selected = line.split(maxsplit=1)[1]
@@ -456,6 +519,8 @@ def main(argv=None):
         if args.command == "doctor":
             return 0 if all(c["ok"] for c in result) else 1
         if isinstance(result, dict) and result.get("status") in {"failed", "unresolved", "budget_exhausted", "verification_failed"}:
+            return 1
+        if args.command == "workflow" and result.get("status") in {"rejected", "interrupted"}:
             return 1
         return 0
     except KeyboardInterrupt:

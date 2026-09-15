@@ -35,6 +35,10 @@ async def bounded_exchange(process, prompt, limit=1000000):
             pass
         finally:
             process.stdin.close()
+            try:
+                await process.stdin.wait_closed()
+            except (BrokenPipeError, ConnectionResetError):
+                pass
 
     sender = asyncio.create_task(send())
     output = bytearray()
@@ -111,5 +115,97 @@ class CodexModel:
                             await process.wait()
 
 
+
+
+class OpenAICompatModel:
+    """OpenAI-compatible Chat Completions (xAI Grok, OpenAI, local gateways)."""
+
+    def __init__(self, settings):
+        self.settings = settings
+
+    def _token(self):
+        if self.settings.token_env:
+            token = os.environ.get(self.settings.token_env)
+            if token:
+                return token
+        for key in ("XAI_API_KEY", "OPENAI_API_KEY"):
+            token = os.environ.get(key)
+            if token:
+                return token
+        auth = Path.home() / ".grok" / "auth.json"
+        if auth.is_file():
+            try:
+                data = json.loads(auth.read_text())
+            except ValueError:
+                data = {}
+            stack = [data]
+            while stack:
+                item = stack.pop()
+                if isinstance(item, dict):
+                    # Grok CLI stores the bearer under "key" beside auth metadata.
+                    if "auth_mode" in item or "refresh_token" in item:
+                        token = item.get("key") or item.get("access_token") or item.get("token")
+                        if isinstance(token, str) and token:
+                            return token
+                    for key in ("access_token", "token", "accessToken"):
+                        token = item.get(key)
+                        if isinstance(token, str) and token:
+                            return token
+                    stack.extend(item.values())
+                elif isinstance(item, list):
+                    stack.extend(item)
+        raise UserError(
+            "No API key or Grok login found. Set XAI_API_KEY / OPENAI_API_KEY, "
+            "pass --token-env, or run `grok login`."
+        )
+
+    async def chat(self, messages, tools):
+        import httpx
+        if not self.settings.model:
+            raise UserError("No model configured. Run: pi-engineering model set grok-4.6 --provider grok")
+        headers = {"Authorization": "Bearer " + self._token(), "Content-Type": "application/json"}
+        endpoint = self.settings.endpoint.rstrip("/")
+        url = endpoint + ("/chat" if endpoint.endswith("/api") else "/chat/completions")
+        payload = {
+            "model": self.settings.model,
+            "messages": messages,
+            "stream": False,
+            "max_tokens": self.settings.output_tokens,
+        }
+        if tools:
+            payload["tools"] = [{"type": "function", "function": {
+                "name": t["name"], "description": t["description"], "parameters": t["inputSchema"]
+            }} for t in tools]
+        try:
+            async with httpx.AsyncClient(timeout=self.settings.timeout, follow_redirects=False, trust_env=False) as client:
+                response = await client.post(url, json=payload, headers=headers)
+                response.raise_for_status()
+                if len(response.content) > 1000000:
+                    raise UserError("Model response exceeded the 1 MB limit")
+                value = response.json()
+            choice = value["choices"][0]["message"]
+            content = choice.get("content") or ""
+            if not isinstance(content, str):
+                raise ValueError("invalid content")
+            tool_calls = []
+            for call in choice.get("tool_calls") or []:
+                function = call.get("function") or {}
+                arguments = function.get("arguments") or "{}"
+                if isinstance(arguments, str):
+                    arguments = json.loads(arguments)
+                tool_calls.append({"function": {"name": function.get("name", ""), "arguments": arguments}})
+            return {"role": "assistant", "content": content, "tool_calls": tool_calls}
+        except httpx.HTTPStatusError as exc:
+            raise UserError(f"Model endpoint returned HTTP {exc.response.status_code}. Check model and credentials.") from exc
+        except httpx.HTTPError as exc:
+            raise UserError("Cannot reach the model endpoint. Check model configuration and service availability.") from exc
+        except (ValueError, KeyError, TypeError) as exc:
+            raise UserError("Model returned an invalid chat response") from exc
+
+
 def make_model(settings):
-    return CodexModel(settings) if settings.provider == "codex" else OllamaModel(settings)
+    if settings.provider == "codex":
+        return CodexModel(settings)
+    if settings.provider in {"openai", "grok"}:
+        return OpenAICompatModel(settings)
+    return OllamaModel(settings)
