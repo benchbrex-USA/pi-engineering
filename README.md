@@ -52,6 +52,25 @@ Codex and Ollama remain fully supported.
 - Exact-hash approvals, receipts, traces, encrypted backup/restore
 - Persona presets and shareable recipes (`profile`, `recipe export`)
 - Knowledge/memory retrieval with citations
+- Deterministic system-graph analysis (`system validate/inspect/check/trace/impact/sample`)
+
+## Runtime model
+
+Pi separates proposal, authority, execution, and verification. The runtime maps
+each responsibility to a concrete module and guarantee:
+
+| Responsibility | Where | Guarantee |
+| --- | --- | --- |
+| Contract | `pi_workspace` settings, `pi_workflow.Workflow` | Strict schemas, exact allowlists; agent DAGs of 1–32 nodes with cycles rejected |
+| Context | `Engine.walk` (`pi_engine.py`) | Bounded context; tool results are untrusted evidence, never instructions |
+| Node graph | `Engine.GRAPH` + `checkpoint()` | Explicit transition table; illegal transitions are refused, never silently taken |
+| Loop | `Engine.walk` | Step, deadline and context budgets; identical no-progress calls are dropped, not looped |
+| Evidence | `workspace.record`, call receipts | SQLite events; action/result hashes with an explicit verification scope |
+| Verification | `completion_status`, file readback | Registered checks must pass; a remote response is not business verification |
+
+Workflow-level scheduling (`run_workflow`) composes these: per-node task
+records with workflow bindings, resource locks, config-change guards, and
+completion only when every node's evidence supports it.
 
 ## Design rules (unchanged)
 

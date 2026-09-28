@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "name": "Auxiliary lighting harness",
+  "domain": "wiring",
+  "description": "A fused 12 V harness with two parallel lamps.",
+  "nodes": [
+    {"id": "battery", "label": "12 V battery", "kind": "source", "properties": {"voltage_v": 12.6}},
+    {"id": "fuse", "label": "5 A fuse", "kind": "protection"},
+    {"id": "splice", "label": "S101 splice", "kind": "splice"},
+    {"id": "lamp-left", "label": "Left lamp", "kind": "load", "properties": {"current_a": 1.4, "min_voltage_v": 10, "max_voltage_v": 15}},
+    {"id": "lamp-right", "label": "Right lamp", "kind": "load", "properties": {"current_a": 1.4, "min_voltage_v": 10, "max_voltage_v": 15}}
+  ],
+  "links": [
+    {"source": "battery", "target": "fuse", "kind": "power", "properties": {"max_current_a": 5, "gauge_awg": 18, "length_m": 0.4}},
+    {"source": "fuse", "target": "splice", "kind": "wire", "properties": {"max_current_a": 5, "gauge_awg": 18, "length_m": 0.8}},
+    {"source": "splice", "target": "lamp-left", "kind": "wire", "properties": {"max_current_a": 3, "gauge_awg": 20, "length_m": 1.2}},
+    {"source": "splice", "target": "lamp-right", "kind": "wire", "properties": {"max_current_a": 3, "gauge_awg": 20, "length_m": 1.4}}
+  ]
+}

@@ -145,6 +145,15 @@ class ProductTests(unittest.IsolatedAsyncioTestCase):
         result = await engine.advance(task["id"], task["calls"][0]["hash"])
         self.assertEqual(result["status"], "rejected")
 
+    async def test_illegal_graph_transition_is_refused_and_not_persisted(self):
+        engine = Engine(self.workspace)
+        task = self.workspace.create("probe", "engineer", "hash")
+        engine.checkpoint(task, "intake")
+        with self.assertRaisesRegex(UserError, "Illegal graph transition: intake -> execute"):
+            engine.checkpoint(task, "execute")
+        self.assertEqual(task["node"], "intake")
+        self.assertEqual(self.workspace.task(task["id"])["node"], "intake")
+
     async def test_workflow_dependencies_and_resume(self):
         path = self.workspace.root / "workflow.json"
         path.write_text(json.dumps({"nodes": {

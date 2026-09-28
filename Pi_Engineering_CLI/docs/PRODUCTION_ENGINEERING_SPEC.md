@@ -20,7 +20,7 @@ Pi is already a serious single-user local agent platform: graph workflows, MCP g
 | --- | --- |
 | Core engine + MCP + approvals | Strong local foundation |
 | Graph scheduler (completion-driven) | Implemented + tested, but **source still partially untracked / dirty vs release packaging** |
-| Terminal design contract | Defined; **3 width/overflow tests currently FAIL** |
+| Terminal design contract | Defined; width/overflow tests **green** (104 passed, 19 subtests as of 2026-09-18) |
 | Open brain | Landed (0.6 brain commands + high ceilings) |
 | Personas / workflows / recipes | Landed |
 | Schema isolation bug (OpsGraph 0/100 root cause) | Fixed + regression test |
@@ -96,7 +96,7 @@ From `SECURITY.md` / `BUILD_CONTRACT.md`:
 
 ## 3. Audit findings (minute detail)
 
-### 3.1 Correctness / quality gates **red now**
+### 3.1 Correctness / quality gates
 
 Full `unittest discover` on 2026-09-15: **95 tests, 3 failures** (all terminal width/overflow):
 
@@ -104,7 +104,7 @@ Full `unittest discover` on 2026-09-15: **95 tests, 3 failures** (all terminal w
 2. `test_qualification.QualificationTests.test_qualification_and_schema_render_without_color_or_overflow`
 3. `test_terminal_experience.TerminalExperienceTests.test_live_projection_parallel_states_and_widths`
 
-**Production blocker:** CLI_DESIGN requires verified behavior at 32/40/80/120/180 columns. These failures mean the TUI contract is currently violated under test.
+**Resolved:** as of 2026-09-18 the full suite is green (**104 passed, 19 subtests passed**); all three width/overflow tests pass. CLI_DESIGN behavior at 32/40/80/120/180 columns is verified under test.
 
 ### 3.2 Packaging / source-of-truth drift
 

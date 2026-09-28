@@ -1,0 +1,21 @@
+{
+  "workspace_read": {
+    "valid": false,
+    "invalid_fields": [
+      [
+        "path"
+      ]
+    ]
+  },
+  "workspace_write": {
+    "valid": false,
+    "invalid_fields": [
+      [
+        "path"
+      ],
+      [
+        "expected_hash"
+      ]
+    ]
+  }
+}

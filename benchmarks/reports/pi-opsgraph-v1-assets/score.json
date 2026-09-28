@@ -1,0 +1,23 @@
+{
+  "benchmark": "BeGuardit OpsGraph Benchmark v1",
+  "result": "Failed",
+  "scope": "delivered artifact; environment-confounded, not a clean model comparison",
+  "functional": 0,
+  "robustnessSecurity": 0,
+  "uiResponsiveness": 0,
+  "accessibility": 0,
+  "performance": 0,
+  "engineering": 0,
+  "testingDocumentation": 0,
+  "total": 0,
+  "appliedCap": 59,
+  "capReason": "Absent/nonfunctional core analysis; does not reduce zero score",
+  "sourceChanges": 0,
+  "solverInvocations": 3,
+  "approvalContinuations": 2,
+  "restarts": 0,
+  "modelSteps": 4,
+  "wallSeconds": 46.70543932914734,
+  "assessment": "NO",
+  "limitations": ["Pi file-schema mutation when checks are registered", "nested sandbox initialization failure", "repository browser-suite server readiness failure"]
+}

@@ -82,7 +82,7 @@ Packed workflows (platform): `workflows/review.json`, `implement-review.json`, `
 ### 2.5 Verification snapshot (this audit)
 
 - `tests.test_graph_scheduler`: **21/21 PASS** (2026-09-15)
-- Full suite still has **3 unrelated TUI width failures** (must not be ignored at product release, but graph suite itself is green)
+- Full suite green as of 2026-09-18: **104 passed, 19 subtests passed** (the previously recorded 3 TUI width failures are fixed)
 - Hygiene risk: `pi_workflow.py` / `pi_engine.py` dirty vs git; `pi_live.py` + graph tests historically untracked — **release freeze required**
 
 ---

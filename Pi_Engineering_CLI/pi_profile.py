@@ -7,16 +7,19 @@ the operator already configured unless explicitly replacing agents.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 from pi_workspace import AgentSettings, UserError
 
 
 PACKAGE_PRESETS = Path(__file__).resolve().parent / "presets"
+# Wheel installs place presets under sys.prefix/share/pi-engineering/presets.
+INSTALLED_PRESETS = Path(sys.prefix) / "share" / "pi-engineering" / "presets"
 
 
 def preset_dirs():
-    return [PACKAGE_PRESETS]
+    return [PACKAGE_PRESETS, INSTALLED_PRESETS]
 
 
 def list_presets():

@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "concurrency": 2,
+  "nodes": {
+    "evidence": {
+      "agent": "researcher",
+      "task": "Collect and cite the physical-system evidence required for this task: topology, connector and pin intent, supply voltage, load current, protection, conductor rating, and source documents. Mark missing values as unknown rather than inferring them.",
+      "priority": 20,
+      "resources": ["repo:working-tree"]
+    },
+    "analyze": {
+      "agent": "engineer",
+      "task": "Analyze the requested physical-system change against the supplied evidence and deterministic system-graph checks. Propose the smallest change and use registered verification checks when available.",
+      "depends_on": ["evidence"],
+      "priority": 10,
+      "resources": ["repo:working-tree", "repo:write"]
+    },
+    "safety-review": {
+      "agent": "reviewer",
+      "task": "Review continuity, voltage, aggregate current, conductor and protection ratings, connector compatibility, failure impact, and missing evidence. Do not modify files.",
+      "depends_on": ["analyze"],
+      "priority": 5,
+      "resources": ["repo:working-tree"]
+    }
+  }
+}

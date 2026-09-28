@@ -165,6 +165,8 @@ class Terminal:
             ("/mcp add --help", "Configure a tool server"),
             ("/knowledge add PATH", "Index a source document"),
             ("/knowledge search QUERY", "Search current indexed sources"),
+            ("/system inspect FILE", "Inspect software, security, or wiring graphs"),
+            ("/system check FILE", "Run deterministic system safety checks"),
             ("/memory list", "Saved operator knowledge"),
             ("/check list", "Registered verification commands"),
             ("/workspace use PATH", "Switch active project"),

@@ -1,0 +1,2 @@
+47200407434d6ded96bcb5b6b4ee02dc9cee52141cc2b40b0288810ad598a3a3  dist/pi_engineering-0.6.0-py3-none-any.whl
+6a003ef368c497382635ca0cc5f5b80613cfcc50eb7169d0b8cb4fc4fb16b3d3  ../Pi_Engineering_CLI.zip

@@ -23,8 +23,10 @@ dependencies = [
 pi-engineering = "pi_app:main"
 
 [tool.setuptools]
-py-modules = ["pi_app", "pi_workspace", "pi_engine", "pi_tools", "pi_terminal", "pi_workflow", "pi_server", "pi_models", "pi_knowledge", "pi_operations", "pi_qualification", "pi_live", "pi_prompt", "pi_profile"]
+py-modules = ["pi_app", "pi_workspace", "pi_engine", "pi_tools", "pi_terminal", "pi_workflow", "pi_server", "pi_models", "pi_knowledge", "pi_operations", "pi_qualification", "pi_live", "pi_prompt", "pi_profile", "pi_system"]
 
 
-[tool.setuptools.package-data]
-"*" = ["presets/*.json", "workflows/*.json"]
+[tool.setuptools.data-files]
+"share/pi-engineering/presets" = ["presets/*.json"]
+"share/pi-engineering/workflows" = ["workflows/*.json"]
+"share/pi-engineering/examples/systems" = ["examples/systems/*.json"]

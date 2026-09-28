@@ -1,0 +1,6 @@
+(version 1)
+(allow default)
+(deny file-read* (subpath "/private/tmp/pi-opsgraph-v1/evaluator") (subpath "/tmp/pi-opsgraph-v1/evaluator") (subpath "/private/tmp/pi-opsgraph-v1.1/evaluator") (subpath "/tmp/pi-opsgraph-v1.1/evaluator") (subpath "/Users/benchbrex/Documents/BeGuardit") (subpath "/Users/benchbrex/.ssh") (subpath "/Users/benchbrex/.aws"))
+(deny file-write* (require-not (require-any (subpath "/private/tmp/pi-opsgraph-v1.1/solver") (subpath "/tmp/pi-opsgraph-v1.1/solver") (literal "/dev/null") (literal "/dev/tty"))))
+(deny network*)
+(allow network* (remote ip "localhost:*") (local ip "localhost:*"))

@@ -27,4 +27,4 @@ Commit basis after freeze + production seals: see latest graph commits on `feat/
 - graph-development.json
 
 ## CI
-- .github/workflows/pi-graph.yml
+- .github/workflows/ci.yml

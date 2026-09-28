@@ -16,7 +16,7 @@ from pi_workspace import Workspace
 class ProfileTests(unittest.TestCase):
     def test_builtin_presets_exist(self):
         names = set(list_presets())
-        self.assertEqual(names, {"developer", "hacker", "cto"})
+        self.assertEqual(names, {"developer", "hacker", "hardware", "cto"})
 
     def test_apply_preserves_existing_agents_by_default(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -35,6 +35,11 @@ class ProfileTests(unittest.TestCase):
             self.assertIn("reviewer", applied["agents"])
             self.assertIn("Adversarial security review", config.agents["reviewer"].role)
 
+    def test_hardware_profile_is_evidence_first(self):
+        data, _ = load_preset("hardware")
+        self.assertIn("wiring-harness engineers", data["audience"])
+        self.assertIn("current capacity", data["agents"]["reviewer"]["role"])
+
     def test_export_recipe_has_no_secret_values(self):
         with tempfile.TemporaryDirectory() as temp:
             workspace = Workspace(temp)
@@ -50,7 +55,7 @@ class ProfileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             workspace = Workspace(temp)
             config = workspace.config()
-            for name in ("review.json", "implement-review.json", "security-pass.json", "release-gate.json"):
+            for name in ("review.json", "implement-review.json", "security-pass.json", "release-gate.json", "hardware-review.json"):
                 path = ROOT / "workflows" / name
                 load_plan(path, config)
 

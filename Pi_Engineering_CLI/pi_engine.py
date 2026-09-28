@@ -208,6 +208,12 @@ class Engine:
                     result = {"ok": False, "error": str(exc), "tool": call["name"]}
                 call["result"] = result
                 call["status"] = "done"
+                if not result.get("ok", True) and not call["read"]:
+                    # A failed write is a conflict that needs human reconciliation,
+                    # not an observation the model can silently recover from.
+                    task["status"] = "unresolved"
+                    self.checkpoint(task, "unresolved", reason="Write conflict; reconcile required")
+                    return
                 call["receipt"] = {"id": "receipt_" + uuid.uuid4().hex[:16], "action_hash": call["hash"],
                                    "result_hash": fingerprint(result), "observed_at": time.time(),
                                    "verification": "file_readback" if result.get("verified") else "tool_response"}

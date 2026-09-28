@@ -138,6 +138,23 @@ def parser():
                    help="Overlay preset agents/checks onto existing names (servers still preserved)")
     recipe = sub.add_parser("recipe").add_subparsers(dest="operation", required=True)
     recipe.add_parser("export")
+    system = sub.add_parser("system", help="Analyze software, security, wiring, or generic system graphs")
+    system_sub = system.add_subparsers(dest="operation", required=True)
+    for operation in ("validate", "inspect", "check"):
+        system_sub.add_parser(operation).add_argument("file")
+    s = system_sub.add_parser("trace", help="Find the shortest evidence path between two nodes")
+    s.add_argument("file")
+    s.add_argument("--from", dest="start", required=True)
+    s.add_argument("--to", dest="end", required=True)
+    s.add_argument("--direction", choices=["downstream", "upstream"], default="downstream")
+    s = system_sub.add_parser("impact", help="Calculate upstream or downstream blast radius")
+    s.add_argument("file")
+    s.add_argument("nodes", nargs="+")
+    s.add_argument("--direction", choices=["downstream", "upstream", "both"], default="downstream")
+    s.add_argument("--max-depth", type=int)
+    s = system_sub.add_parser("sample", help="Create or print a starter system graph")
+    s.add_argument("domain", choices=["software", "security", "wiring"])
+    s.add_argument("--output")
 
     def globals_after_command(current):
         for action in list(current._actions):
@@ -231,6 +248,20 @@ async def dispatch(args, workspace, terminal):
 
 
 async def _dispatch(args, workspace, terminal):
+    if args.command == "system":
+        from pi_system import check_system, impact, inspect_system, load_system, sample_system, trace, validate_system
+        if args.operation == "sample":
+            return sample_system(args.domain, args.output)
+        if args.operation == "validate":
+            return validate_system(args.file)
+        graph, digest = load_system(args.file)
+        if args.operation == "inspect":
+            return inspect_system(graph, digest)
+        if args.operation == "check":
+            return check_system(graph)
+        if args.operation == "trace":
+            return trace(graph, args.start, args.end, args.direction)
+        return impact(graph, args.nodes, args.direction, args.max_depth)
     if args.command == "mcp" and args.operation == "qualify":
         from pi_qualification import qualify
         return await qualify(workspace, args.file)
@@ -279,7 +310,8 @@ async def _dispatch(args, workspace, terminal):
         if args.provider in {"grok", "compat"} and endpoint in {"", "http://127.0.0.1:11434"}:
             endpoint = "https://api.x.ai/v1"
         if args.provider == "grok" and not token_env:
-            token_env = "XAI_API_KEY"
+            # Environment variable name, not a secret value.
+            token_env = "XAI_API_KEY"  # nosec
         if args.provider == "openai" and endpoint in {"", "http://127.0.0.1:11434"}:
             endpoint = "https://api.openai.com/v1"
         config.model = config.model.model_copy(update={
@@ -307,7 +339,8 @@ async def _dispatch(args, workspace, terminal):
                 if endpoint in {"", "http://127.0.0.1:11434"}:
                     endpoint = "https://api.x.ai/v1"
                 if not token_env and args.provider == "grok":
-                    token_env = "XAI_API_KEY"
+                    # Environment variable name, not a secret value.
+                    token_env = "XAI_API_KEY"  # nosec
             elif args.provider == "openai" and endpoint in {"", "http://127.0.0.1:11434"}:
                 endpoint = "https://api.openai.com/v1"
             update = {"provider": args.provider, "model": args.model, "endpoint": endpoint, "token_env": token_env}
@@ -453,6 +486,43 @@ def display(result, terminal, as_json=False, command=None):
                 terminal.text("    " + name + "  " + task_id)
             if result["status"] != "completed":
                 terminal.text("  Use workflow FILE --explain to inspect blockers", "cyan")
+    elif command == "system":
+        kind = result.get("kind")
+        if kind == "system_sample":
+            terminal.row("SUCCEEDED", result["domain"].capitalize() + " system graph",
+                         result["output"] or "Starter graph")
+            if not result["output"]:
+                terminal.text(json.dumps(result["graph"], indent=2, ensure_ascii=False))
+        elif kind == "system_validation":
+            terminal.row("SUCCEEDED", result["name"], f"{result['domain']} | {result['nodes']} nodes | {result['links']} links")
+            terminal.text("    Evidence " + result["sha256"], "dim")
+        elif kind == "system_inspection":
+            status = "FAILED" if result["status"] == "failed" else "WARNING" if result["status"] == "warning" else "SUCCEEDED"
+            topology = result["topology"]
+            terminal.row(status, result["name"], result["domain"])
+            terminal.text(f"    {topology['nodes']} nodes  {topology['links']} links  {topology['components']} components", "bold")
+            terminal.text("    Node types  " + ", ".join(f"{name}:{count}" for name, count in result["node_kinds"].items()), "cyan")
+            terminal.text("    Link types  " + ", ".join(f"{name}:{count}" for name, count in result["link_kinds"].items()), "cyan")
+            if topology["cycles"]:
+                terminal.text("    Cycles  " + " -> ".join(topology["cycles"]), "yellow")
+            terminal.text(f"    Health  {result['health']['errors']} errors  {result['health']['warnings']} warnings", "dim")
+        elif kind == "system_check":
+            status = "FAILED" if result["status"] == "failed" else "WARNING" if result["status"] == "warning" else "SUCCEEDED"
+            terminal.row(status, result["system"], f"{result['summary']['errors']} errors | {result['summary']['warnings']} warnings")
+            for finding in result["findings"]:
+                row_status = "FAILED" if finding["severity"] == "ERROR" else "WARNING" if finding["severity"] == "WARNING" else "INFO"
+                terminal.row(row_status, finding["code"], finding["message"] + ((" | " + finding["subject"]) if finding["subject"] else ""), level=1)
+        elif kind == "system_trace":
+            terminal.row("SUCCEEDED" if result["reachable"] else "WARNING",
+                         f"{result['from']} -> {result['to']}", f"{result['hops']} hops" if result["reachable"] else "No path")
+            if result["path"]:
+                terminal.text("    " + "  ->  ".join(result["path"]), "bold cyan")
+        elif kind == "system_impact":
+            terminal.row("INFO", result["system"], f"{len(result['affected'])} affected | {result['direction']}")
+            for node in result["failed"]:
+                terminal.row("FAILED", node, "origin", level=1)
+            for node in result["affected"]:
+                terminal.row("WARNING", node, f"distance {result['distances'][node]}", level=1)
     elif command == "graph":
         terminal.text("  TASK EXECUTION", "bold")
         terminal.text("  Intake -> Context -> Propose -> Policy")

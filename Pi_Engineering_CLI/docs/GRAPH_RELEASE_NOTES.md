@@ -7,7 +7,7 @@
 - Froze graph runtime/tests/docs into git (no longer untracked drift).
 - Added `inspection_schema: 1` to offline workflow inspection JSON.
 - Added `tests/test_graph_production.py`: side-effect proofs, resume matrix, pack/persona load, all-success join.
-- Added CI workflow `.github/workflows/pi-graph.yml` (ubuntu/macOS × Python 3.11/3.12).
+- Added CI workflow `.github/workflows/ci.yml` (ubuntu/macOS × Python 3.11/3.12).
 
 ## What did not change
 - Terminal UI/UX/design language

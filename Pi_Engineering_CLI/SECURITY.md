@@ -45,7 +45,7 @@ Reproduce automated checks:
 
 ```sh
 python3 -m pip_audit . --progress-spinner off
-python3 -m bandit pi_app.py pi_workspace.py pi_engine.py pi_tools.py pi_models.py pi_operations.py pi_knowledge.py pi_workflow.py pi_server.py pi_terminal.py pi_qualification.py
+python3 -m bandit pi_app.py pi_workspace.py pi_engine.py pi_tools.py pi_models.py pi_operations.py pi_knowledge.py pi_workflow.py pi_server.py pi_terminal.py pi_qualification.py pi_live.py pi_prompt.py pi_profile.py pi_system.py
 ```
 
 Scanner results are time-bound, heuristic evidence, not penetration testing or a

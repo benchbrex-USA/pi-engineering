@@ -1,0 +1,34 @@
+{
+  "name": "hardware",
+  "audience": "Electrical, embedded, robotics, and wiring-harness engineers",
+  "description": "Evidence-first physical-system analysis with deterministic graph checks before agent review.",
+  "model_hint": {
+    "provider": "grok",
+    "model": "grok-4.6"
+  },
+  "agents": {
+    "engineer": {
+      "role": "Analyze physical-system evidence, connector and pin intent, electrical limits, and change impact. Never infer an unrecorded rating; request evidence and verify every proposed change.",
+      "tools": ["workspace_files", "workspace_read", "workspace_write", "workspace_check", "knowledge_search", "memory_search"],
+      "enabled": true,
+      "max_steps": 64,
+      "deadline_seconds": 3600
+    },
+    "reviewer": {
+      "role": "Review harness and embedded-system changes for continuity, voltage, current capacity, protection, connector compatibility, and missing evidence. Do not modify files.",
+      "tools": ["workspace_files", "workspace_read", "workspace_check", "knowledge_search", "memory_search"],
+      "enabled": true,
+      "max_steps": 64,
+      "deadline_seconds": 3600
+    },
+    "researcher": {
+      "role": "Collect component, interface, pinout, and specification evidence from authorized sources. Clearly separate observed ratings from assumptions.",
+      "tools": ["workspace_files", "workspace_read", "knowledge_search", "memory_search"],
+      "enabled": true,
+      "max_steps": 64,
+      "deadline_seconds": 3600
+    }
+  },
+  "checks": {},
+  "default_workflow": "workflows/hardware-review.json"
+}

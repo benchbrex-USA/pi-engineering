@@ -128,3 +128,16 @@ class ReleaseFeatures(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(task["status"], "completed")
         self.assertTrue(task["calls"][0]["result"]["check_passed"])
         self.assertIn("verified", task["calls"][0]["result"]["output"])
+
+    async def test_check_environment_is_restricted(self):
+        config = self.workspace.config()
+        config.checks["env-probe"] = ["env"]
+        self.workspace.save(config)
+        engine = Engine(self.workspace)
+        task = await engine.propose_tool("workspace_check", {"name": "env-probe"})
+        with patch.dict(os.environ, {"PI_PROBE_SECRET": "never-leak"}):
+            task = await engine.advance(task["id"], task["calls"][0]["hash"])
+        self.assertEqual(task["status"], "completed")
+        output = task["calls"][0]["result"]["output"]
+        self.assertIn("PATH=", output)
+        self.assertNotIn("PI_PROBE_SECRET", output)

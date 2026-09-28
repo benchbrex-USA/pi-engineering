@@ -47,7 +47,46 @@ pi-engineering recipe export --json
 pi-engineering workflow workflows/implement-review.json --validate --json
 ```
 
-Supported built-in profiles: `developer`, `hacker`, `cto`.
+Supported built-in profiles: `developer`, `hacker`, `hardware`, `cto`.
+The hardware profile adds evidence-first roles for electrical, embedded,
+robotics, and wiring-harness work.
+
+## Universal system graphs
+
+Pi can analyze software dependencies, security attack paths, and physical
+wiring harnesses with the same versioned evidence format. These commands are
+deterministic: they do not require a model, send data externally, or change the
+workspace unless `system sample --output` is explicitly used.
+
+```sh
+# Start from one of the bundled, editable graph formats.
+pi-engineering system sample software --output software-system.json
+pi-engineering system sample security --output threat-system.json
+pi-engineering system sample wiring --output harness-system.json
+
+# Inspect structure and domain-specific health.
+pi-engineering system validate harness-system.json
+pi-engineering system inspect harness-system.json
+pi-engineering system check harness-system.json
+
+# Explain a route or calculate a failure/change blast radius.
+pi-engineering system trace software-system.json --from web --to fulfillment
+pi-engineering system impact software-system.json api --direction downstream
+pi-engineering system impact harness-system.json splice --direction both --max-depth 2
+```
+
+Every graph contains `version`, `name`, `domain`, `nodes`, and `links`. Node IDs
+are stable evidence identities. Links are directed and typed. Domain-specific
+properties remain explicit rather than inferred: wiring sources use
+`voltage_v`, loads can declare `current_a`, `min_voltage_v`, and
+`max_voltage_v`, and wire/power links can declare `max_current_a`.
+
+The wiring analyzer calculates shared branch current, utilization, open loads,
+voltage violations, missing ratings, duplicate links, self-links, cycles, and
+disconnected components. The security analyzer finds shortest paths from
+`entry`, `actor`, or `interface` nodes to `asset`, `secret`, or `privilege`
+nodes. Generic impact and path analysis work for every domain. Use `--json` for
+CI, scripts, MCP wrappers, and other agents; failed safety checks exit nonzero.
 
 ## Connect a model
 

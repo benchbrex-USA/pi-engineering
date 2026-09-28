@@ -1,15 +1,40 @@
-# Release verification: 0.3.2
+# Release verification: 0.6.0
 
-Date: 2026-09-13. Verdict: PASS WITH EXTERNAL GATES.
+Date: 2026-09-28. Verdict: PASS WITH EXTERNAL GATES.
 Scope: single-OS-user macOS arm64 CLI, Python 3.11, isolated runtime.
 Full customer production qualification remains incomplete. Automated checks are
 not an independent security assessment or representative-user acceptance.
 
-## Current evidence
+## 0.6.0 evidence
+
+The 0.6.0 release adds deterministic system-graph analysis (`system
+validate/inspect/check/trace/impact/sample` over software, security and wiring
+domains), a hardware reviewer persona preset, shareable example graphs and the
+packaged wheel 0.6.0. The graph runtime is unchanged since the graph release;
+see GRAPH_VERIFICATION.md for its acceptance matrix, synthetic baseline,
+failure paths and packaging results.
 
 | Claim | Executed evidence | Result |
 | --- | --- | --- |
-| Regression behavior | 56 tests: 46 product and 10 historical | PASS |
+| Regression behavior | 119 tests in tests/ and 46 companion tests, each suite run twice | PASS |
+| System-graph analysis | Real console-script acceptance: validate, inspect, check, trace, impact, sample including refusal paths | PASS |
+| Failed write conflict | Changed-file write conflict marks the task unresolved and never overwrites | PASS |
+| Workflow packs | All nine packs load, including hardware-review | PASS |
+| Installed package acceptance | proposal, approval, write/readback, replay, retrieval, memory, checks, encrypted recovery | PASS |
+| Static security scan | Bandit 1.9.4, fifteen production modules, no findings; two documented nosec suppressions for env-var-name literals | PASS |
+| Dependency advisories | pip-audit 2.10.1, exact 36-package runtime lock | No known vulnerabilities |
+
+## 0.5.0 graph release (retained evidence)
+
+The graph release added completion-driven scheduling, resource ownership and
+offline validation/explanations. See GRAPH_VERIFICATION.md for its
+acceptance matrix, synthetic baseline, failure paths and packaging results.
+Live-model and integration rows below are historical retained evidence, not
+fresh external qualification of that graph release.
+
+| Claim | Executed evidence | Result |
+| --- | --- | --- |
+| Regression behavior | 86 source tests: 76 product and 10 legacy tests | PASS |
 | Interrupted restore | Injected failures before/after publication block state access | PASS |
 | Recovery publication | Successful publication restores records; concurrent nonempty state preserved | PASS |
 | Real model retrieval, memory, approved write | Three isolated trials, nine cases | 9/9 PASS |
@@ -21,8 +46,27 @@ not an independent security assessment or representative-user acceptance.
 | Resource hardening | Excessive Codex event output refused | PASS |
 | State integrity boundary | Configuration, lock and SQLite journal symlinks refused | PASS |
 | Terminal qualification views | Plain output at 32/80/120 columns | PASS |
-| Static security scan | Bandit 1.9.4, eleven production modules | No findings |
-| Dependency advisories | pip-audit 2.10.1, exact 34-package runtime lock | No known vulnerabilities |
+| Static security scan | Bandit 1.9.4, thirteen production modules | No findings |
+| Dependency advisories | pip-audit 2.10.1, exact 36-package runtime lock | No known vulnerabilities |
+
+## 0.4.0 terminal evidence
+
+Installed wheel acceptance passed proposal, exact approval, write/readback,
+replay, retrieval, memory, checks and encrypted recovery. The installed
+`~/.local/bin/pi-engineering --version` returns 0.4.0.
+
+Nine new UI tests cover searchable completion, validation, approval-hash
+noncompletion, parallel task identity, widths, failure status, workflow totals,
+interruption cleanup, color fallback and real engine-event projection.
+Manual PTY checks exercised Ctrl-P search, selection, review and clean exit.
+An actual hosted-model run in an empty temporary workspace completed in two
+steps with a workspace_files observation; no private documents were sent.
+Animated frames and elapsed time were observed during that run.
+
+Rich-rendered approval/write previews at 40 and 100 columns were visually
+inspected. These are render fixtures from an actual local approval roundtrip,
+not screenshots of a customer session. Progress percentages are only rendered
+for known workflow node totals. Plain and JSON output do not animate.
 
 Installed 0.3.1 console-script acceptance passed proposal, exact approval,
 write/readback, replay, retrieval, memory, checks and encrypted backup/restore.
@@ -55,8 +99,9 @@ or an ADK comparison. No fourfold performance/intelligence claim is made.
 .venv/bin/python tests/live_acceptance.py --trials 3
 .venv/bin/python tests/live_integration.py
 .venv/bin/python tests/check_distribution.py "$PWD/.venv/bin/pi-engineering"
+.venv/bin/pi-engineering system validate examples/systems/software.json
 python3 -m pip_audit -r requirements.lock --no-deps --disable-pip
-python3 -m bandit pi_app.py pi_workspace.py pi_engine.py pi_tools.py pi_models.py pi_operations.py pi_knowledge.py pi_workflow.py pi_server.py pi_terminal.py pi_qualification.py
+python3 -m bandit pi_app.py pi_workspace.py pi_engine.py pi_tools.py pi_models.py pi_operations.py pi_knowledge.py pi_workflow.py pi_server.py pi_terminal.py pi_qualification.py pi_live.py pi_prompt.py pi_profile.py pi_system.py
 ```
 
 Evidence files: reports/live.json, integration.json, dependency-audit.json,
@@ -64,14 +109,17 @@ security-static.json and load.json. Local MCP tests require listener permission.
 Live cases require authenticated Codex and network access. CI defines macOS/Linux
 Python 3.11/3.12 jobs; remote CI execution was not performed here.
 The packaged source omits ten legacy teaching tests and their implementation;
-its product-only suite contains 46 tests.
+its product-only suite excludes those ten legacy tests; current counts are in
+GRAPH_VERIFICATION.md.
 
 0.3.2 stages and fsyncs restore files before publication, and leaves a durable
 recovery marker on failure. Configuration, databases and run access refuse an
 unfinished restore. Recovery is into a new empty directory, preserving the failed
 target for investigation. Tests inject publication and fsync errors; they do not
 simulate physical power loss or certify filesystem/hardware durability.
-Live-model results above were obtained on 0.3.1; the model adapter is unchanged.
+The nine historical live-model cases above were obtained on 0.3.1. Version 0.4.0
+also awaits subprocess stdin closure to consume broken-pipe cleanup errors;
+the new two-step PTY smoke test exercised the updated adapter.
 
 ## External gates
 

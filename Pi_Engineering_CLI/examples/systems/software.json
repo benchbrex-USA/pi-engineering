@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "name": "Checkout platform",
+  "domain": "software",
+  "description": "A small service dependency map for impact analysis.",
+  "nodes": [
+    {"id": "web", "label": "Web application", "kind": "application"},
+    {"id": "api", "label": "Checkout API", "kind": "service"},
+    {"id": "payments", "label": "Payment service", "kind": "service"},
+    {"id": "orders", "label": "Orders database", "kind": "database"},
+    {"id": "events", "label": "Event stream", "kind": "queue"},
+    {"id": "fulfillment", "label": "Fulfillment worker", "kind": "worker"}
+  ],
+  "links": [
+    {"source": "web", "target": "api", "kind": "calls"},
+    {"source": "api", "target": "payments", "kind": "calls"},
+    {"source": "api", "target": "orders", "kind": "writes"},
+    {"source": "api", "target": "events", "kind": "publishes"},
+    {"source": "events", "target": "fulfillment", "kind": "delivers"}
+  ]
+}

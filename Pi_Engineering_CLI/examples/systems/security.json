@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "name": "Public API threat path",
+  "domain": "security",
+  "description": "Entry points, trust boundaries, controls, and protected assets.",
+  "nodes": [
+    {"id": "internet", "label": "Internet", "kind": "entry"},
+    {"id": "gateway", "label": "API gateway", "kind": "control"},
+    {"id": "session-api", "label": "Session API", "kind": "service"},
+    {"id": "admin-role", "label": "Administrator role", "kind": "privilege"},
+    {"id": "customer-data", "label": "Customer records", "kind": "asset"}
+  ],
+  "links": [
+    {"source": "internet", "target": "gateway", "kind": "request"},
+    {"source": "gateway", "target": "session-api", "kind": "forwards"},
+    {"source": "session-api", "target": "admin-role", "kind": "can-assume"},
+    {"source": "admin-role", "target": "customer-data", "kind": "can-read"}
+  ]
+}
