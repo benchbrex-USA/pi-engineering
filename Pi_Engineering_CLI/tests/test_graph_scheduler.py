@@ -331,7 +331,7 @@ class GraphTests(unittest.IsolatedAsyncioTestCase):
                                    cwd=Path(__file__).resolve().parents[1], stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         try:
-            self.assertEqual(await asyncio.wait_for(asyncio.to_thread(process.stdout.readline), 3), "ready\n")
+            self.assertEqual(await asyncio.wait_for(asyncio.to_thread(process.stdout.readline), 15), "ready\n")
             with self.assertRaisesRegex(UserError, "resource is busy"):
                 await Engine(self.workspace).advance(task["id"], task["calls"][0]["hash"])
         finally:

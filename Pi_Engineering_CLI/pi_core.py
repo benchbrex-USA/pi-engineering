@@ -412,7 +412,10 @@ class PiStore:
         self.db.execute(
             "INSERT INTO tickets VALUES (?, ?, ?, ?, 0, ?, ?) "
             "ON CONFLICT(tenant, ticket) DO UPDATE SET title=excluded.title, "
-            "status=excluded.status, priority=excluded.priority, updated_at=excluded.updated_at",
+            "status=excluded.status, version=tickets.version+1, "
+            "priority=excluded.priority, updated_at=excluded.updated_at "
+            "WHERE tickets.title != excluded.title OR tickets.status != excluded.status "
+            "OR tickets.priority != excluded.priority",
             (tenant, ticket, title.strip()[:240], status, priority, self.clock()),
         )
         return self.ticket(tenant, ticket)
@@ -445,7 +448,7 @@ class PiStore:
         return row_dict(row)
 
     def tickets(self, tenant: str | None = None) -> list[dict[str, Any]]:
-        if tenant:
+        if tenant is not None:
             rows = self.db.execute(
                 "SELECT * FROM tickets WHERE tenant=? ORDER BY ticket", (tenant,)
             ).fetchall()
@@ -454,7 +457,7 @@ class PiStore:
         return [row_dict(row) for row in rows]
 
     def evidence(self, tenant: str | None = None) -> list[dict[str, Any]]:
-        if tenant:
+        if tenant is not None:
             rows = self.db.execute(
                 "SELECT * FROM evidence WHERE tenant=? ORDER BY id", (tenant,)
             ).fetchall()
@@ -519,10 +522,16 @@ class PiStore:
             raise PiError("run_not_found", 404)
         return inflate_run(row_dict(row))
 
-    def runs(self, limit: int = 20) -> list[dict[str, Any]]:
-        rows = self.db.execute(
-            "SELECT * FROM runs ORDER BY created_at DESC LIMIT ?", (limit,)
-        ).fetchall()
+    def runs(self, limit: int = 20, tenant: str | None = None) -> list[dict[str, Any]]:
+        if tenant is not None:
+            rows = self.db.execute(
+                "SELECT * FROM runs WHERE tenant=? ORDER BY created_at DESC LIMIT ?",
+                (tenant, limit),
+            ).fetchall()
+        else:
+            rows = self.db.execute(
+                "SELECT * FROM runs ORDER BY created_at DESC LIMIT ?", (limit,)
+            ).fetchall()
         return [inflate_run(row_dict(row)) for row in rows]
 
     def checkpoints(self, run_id: str) -> list[dict[str, Any]]:
@@ -727,7 +736,7 @@ class PiStore:
         return {
             "tickets": self.tickets(tenant),
             "evidence": self.evidence(tenant),
-            "runs": self.runs(),
+            "runs": self.runs(tenant=tenant),
             "agents": self.agents(),
             "policy_rules": self.policy_rules(),
             "latest_eval": self.latest_eval(),

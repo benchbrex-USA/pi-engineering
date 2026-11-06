@@ -24,6 +24,24 @@ failure paths and packaging results.
 | Static security scan | Bandit 1.9.4, fifteen production modules, no findings; two documented nosec suppressions for env-var-name literals | PASS |
 | Dependency advisories | pip-audit 2.10.1, exact 36-package runtime lock | No known vulnerabilities |
 
+## Post-release patch verification (2026-11-07)
+
+Scope: same single-OS-user macOS arm64 local CLI. This updates the test counts
+above for the current tree and does not re-open or close the external gates.
+
+| Claim | Executed evidence | Result |
+| --- | --- | --- |
+| Regression behavior | 123 tests in tests/, consecutive `unittest discover` runs | PASS |
+| Animated live operation | `Terminal.operation` renders non-nested and leaves an empty `_live_stack` on completion and KeyboardInterrupt | PASS |
+| Distribution | Rebuilt 0.6.0 wheel installs non-editably; `profile list` shows four presets; `tests/check_distribution.py` passes | PASS |
+| Artifact identity | `build/lib` modules byte-identical to source; wheel and source zip digests recorded in `SHA256SUMS.txt` | PASS |
+
+Patch fixes: stale-ticket approvals are invalidated when a ticket changes,
+tenant-scoped state treats an empty tenant as no rows, p95 uses nearest rank,
+component analysis builds adjacency once, and the animated live stack renders
+and cleans up correctly. The declared 0.6.0 identity is unchanged; the wheel
+was rebuilt locally and is not published.
+
 ## 0.5.0 graph release (retained evidence)
 
 The graph release added completion-driven scheduling, resource ownership and

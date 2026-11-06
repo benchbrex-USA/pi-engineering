@@ -10,7 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from pi_system import check_system, impact, inspect_system, load_system, sample_system, trace
+from pi_system import _components, check_system, impact, inspect_system, load_system, sample_system, trace
 from pi_workspace import UserError
 
 
@@ -115,6 +115,19 @@ class SystemGraphTests(unittest.TestCase):
             path.write_text(json.dumps(data))
             graph, digest = load_system(path)
         self.assertEqual(inspect_system(graph, digest)["topology"]["cycles"], ["a", "b"])
+
+    def test_components_build_adjacency_once_and_include_weak_links(self):
+        from unittest.mock import patch
+        import pi_system
+
+        graph = pi_system.SystemGraph.model_validate({
+            "version": 1, "name": "components",
+            "nodes": [{"id": name} for name in ("a", "b", "c", "d")],
+            "links": [{"source": "a", "target": "b"}, {"source": "c", "target": "b"}],
+        })
+        with patch("pi_system._maps", wraps=pi_system._maps) as maps:
+            self.assertEqual(_components(graph), [["a", "b", "c"], ["d"]])
+        maps.assert_called_once_with(graph)
 
     def test_cli_json_contract(self):
         result = subprocess.run([sys.executable, str(ROOT / "pi_app.py"), "system", "impact",

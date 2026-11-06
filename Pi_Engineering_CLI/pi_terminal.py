@@ -29,6 +29,8 @@ class Terminal:
         self.console = console or Console(highlight=False, markup=False,
                                           no_color=plain or "NO_COLOR" in os.environ,
                                           color_system=None if plain else "auto")
+        if not hasattr(self.console, "_live_stack"):
+            self.console._live_stack = []
         self.plain = plain
         self.command_prefix = "pi-engineering "
         self.animate = animate and self.console.is_terminal and not plain and "NO_COLOR" not in os.environ
@@ -90,12 +92,19 @@ class Terminal:
         self.active_view = view
         try:
             if self.animate:
-                with Live(view, console=self.console, refresh_per_second=10, transient=False):
-                    try:
-                        yield view
-                    except BaseException:
-                        view.finish(error=True)
-                        raise
+                live = Live(view, console=self.console, refresh_per_second=10, transient=False)
+                try:
+                    with live:
+                        try:
+                            yield view
+                        except BaseException:
+                            view.finish(error=True)
+                            raise
+                finally:
+                    live_stack = getattr(self.console, "_live_stack", None)
+                    if live_stack is not None:
+                        while live in live_stack:
+                            live_stack.remove(live)
             else:
                 self.row("PROCESSING", label)
                 yield view

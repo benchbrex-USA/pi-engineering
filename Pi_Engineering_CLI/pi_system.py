@@ -203,13 +203,22 @@ def _path_from_parents(parent, target):
 
 def _components(graph: SystemGraph):
     forward, reverse, _ = _maps(graph)
-    remaining = {node.id for node in graph.nodes}
+    visited = set()
     result = []
-    while remaining:
-        root = min(remaining)
-        component = set(_distances(graph, [root], "both"))
+    for root in sorted(forward):
+        if root in visited:
+            continue
+        component = []
+        visited.add(root)
+        queue = deque([root])
+        while queue:
+            current = queue.popleft()
+            component.append(current)
+            for neighbor in sorted(set(forward[current] + reverse[current])):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
         result.append(sorted(component))
-        remaining -= component
     return result
 
 

@@ -265,7 +265,7 @@ class MCPRuntime:
                 payload = reject(self.store, str(arguments["run_id"]), str(arguments.get("reason", "rejected_by_operator")))
             elif name == "pi.state":
                 tenant = arguments.get("tenant")
-                payload = self.store.state(str(tenant) if tenant else None)
+                payload = self.store.state(str(tenant) if tenant is not None else None)
             elif name == "pi.add_ticket":
                 payload = self.store.add_ticket(
                     str(arguments["tenant"]),

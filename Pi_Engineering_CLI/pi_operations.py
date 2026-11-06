@@ -134,6 +134,7 @@ def metrics(workspace):
     for row in rows:
         states[row["status"]] = states.get(row["status"], 0) + 1
     elapsed = sorted(row["elapsed"] for row in rows)
+    p95_index = (95 * len(elapsed) + 99) // 100 - 1
     return {"tasks": len(rows), "states": states, "model_steps": sum(row["steps"] for row in rows),
             "tool_calls": sum(len(row["calls"]) for row in rows),
-            "p95_elapsed_seconds": elapsed[min(len(elapsed) - 1, int(len(elapsed) * .95))] if elapsed else 0}
+            "p95_elapsed_seconds": elapsed[p95_index] if elapsed else 0}

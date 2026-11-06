@@ -61,6 +61,14 @@ class ReleaseFeatures(unittest.IsolatedAsyncioTestCase):
         knowledge = Knowledge(self.workspace)
         self.assertEqual(knowledge.search('" OR * NEAR(foo)'), [])
 
+    def test_metrics_uses_nearest_rank_p95(self):
+        for elapsed in range(1, 21):
+            self.workspace.record({
+                "id": f"task_{elapsed}", "status": "completed",
+                "steps": 0, "elapsed": elapsed, "calls": [],
+            }, "created")
+        self.assertEqual(metrics(self.workspace)["p95_elapsed_seconds"], 19)
+
     async def test_encrypted_backup_restore_and_wrong_key(self):
         await Engine(self.workspace, model=SequenceModel([answer()])).start("inspect")
         Knowledge(self.workspace).remember("Release", "maple", "operator")

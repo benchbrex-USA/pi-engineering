@@ -1,6 +1,7 @@
 .pi/
 .pi-engineering/
 .venv/
+.wheelcheck/
 __pycache__/
 *.egg-info/
 build/

@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from mcp_server import MCPRuntime, process_line
-from pi_core import PiError, PiGraph, PiStore, approve, build_context, run_eval
+from pi_core import PiError, PiGraph, PiStore, RunState, approve, build_context, run_eval
 
 
 class PiEngineeringCLITest(unittest.TestCase):
@@ -53,6 +53,59 @@ class PiEngineeringCLITest(unittest.TestCase):
         with self.assertRaises(PiError):
             approve(self.store, result["id"], "mallory")
         self.assertEqual(self.store.ticket("aster", "T-101")["status"], "pending")
+
+    def test_ticket_update_invalidates_pending_approval(self) -> None:
+        result = PiGraph().run(
+            self.store, "aster", "alice", "Mark T-100 pending for customer confirmation"
+        )
+        original = self.store.ticket("aster", "T-100")
+        self.assertEqual(original["version"], result["proposal"]["action"]["expected_version"])
+
+        unchanged = self.store.add_ticket(
+            "aster", "T-100", original["title"], original["status"], original["priority"]
+        )
+        self.assertEqual(unchanged["version"], original["version"])
+
+        changed = self.store.add_ticket(
+            "aster", "T-100", "Updated by another operator", "resolved", "low"
+        )
+        self.assertEqual(changed["version"], original["version"] + 1)
+        with self.assertRaisesRegex(PiError, "stale_ticket"):
+            approve(self.store, result["id"], "alice")
+        current = self.store.ticket("aster", "T-100")
+        self.assertEqual(current["status"], "resolved")
+        self.assertEqual(current["title"], "Updated by another operator")
+
+    def test_tenant_state_scopes_runs_and_preserves_global_view(self) -> None:
+        self.store.save_run(RunState("run_aster", "aster", "alice", "private aster request"))
+        self.store.save_run(RunState("run_beacon", "beacon", "bob", "private beacon request"))
+
+        scoped = self.store.state("aster")
+        self.assertEqual([run["tenant"] for run in scoped["runs"]], ["aster"])
+        self.assertTrue(scoped["tickets"])
+        self.assertTrue(all(ticket["tenant"] == "aster" for ticket in scoped["tickets"]))
+        self.assertTrue(scoped["evidence"])
+        self.assertTrue(all(item["tenant"] == "aster" for item in scoped["evidence"]))
+        self.assertEqual(
+            {run["tenant"] for run in self.store.state()["runs"]}, {"aster", "beacon"}
+        )
+        self.assertEqual(self.store.state("")["tickets"], [])
+        self.assertEqual(self.store.state("")["evidence"], [])
+        self.assertEqual(self.store.state("")["runs"], [])
+
+        runtime = MCPRuntime(str(self.db))
+        try:
+            self.assertEqual(
+                [run["tenant"] for run in runtime.call_tool("pi.state", {"tenant": "aster"})[
+                    "structuredContent"
+                ]["runs"]],
+                ["aster"],
+            )
+            self.assertEqual(
+                runtime.call_tool("pi.state", {"tenant": ""})["structuredContent"]["runs"], []
+            )
+        finally:
+            runtime.close()
 
     def test_manifest_excludes_raw_evidence_text(self) -> None:
         manifest = build_context(
