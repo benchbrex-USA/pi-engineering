@@ -229,7 +229,17 @@ class ToolBroker:
 
     def validate(self, name, arguments):
         if name not in self.tools:
-            raise UserError(f"Tool is unavailable or not permitted: {name}")
+            hint = ""
+            if self.allowed is not None and name not in self.allowed:
+                hint = (f" It is not in this agent's allowlist; grant it with "
+                        f"`pi-engineering agent set AGENT --role ROLE --tools ... {name}`.")
+            else:
+                server = name.split("__", 1)[0] if "__" in name else ""
+                if server and server not in self.config.servers:
+                    hint = f" Configure the '{server}' MCP connection first with `pi-engineering mcp add`."
+                elif server and not self.config.servers[server].enabled:
+                    hint = f" The '{server}' MCP connection is disabled; enable it to use this tool."
+            raise UserError(f"Tool is unavailable or not permitted: {name}.{hint}")
         try:
             Draft202012Validator(self.tools[name]["inputSchema"]).validate(arguments)
         except ValidationError as exc:

@@ -2,6 +2,7 @@
 .pi-engineering/
 .venv/
 .wheelcheck/
+.eval/
 __pycache__/
 *.egg-info/
 build/

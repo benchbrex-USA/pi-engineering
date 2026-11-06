@@ -100,7 +100,7 @@ def parser():
     mode.add_argument("--validate", action="store_true", help="Validate graph offline; no tasks or inference")
     mode.add_argument("--explain", action="store_true", help="Inspect saved node blockers without executing")
     knowledge = sub.add_parser("knowledge").add_subparsers(dest="operation", required=True)
-    knowledge.add_parser("add").add_argument("path")
+    knowledge.add_parser("add").add_argument("path", help="File to index, relative to the workspace root (text or PDF)")
     knowledge.add_parser("list")
     knowledge.add_parser("search").add_argument("query")
     knowledge.add_parser("remove").add_argument("id")
@@ -201,6 +201,10 @@ async def doctor(workspace):
             except Exception as exc:
                 ok, detail = False, str(exc)
             checks.append({"name": "Model", "ok": ok, "detail": detail})
+            return checks + await connection_checks(workspace, config)
+        if not config.model.model:
+            checks.append({"name": "Model", "ok": False,
+                           "detail": "No model configured. Run: pi-engineering model set MODEL --endpoint URL"})
             return checks + await connection_checks(workspace, config)
         headers = {}
         if config.model.token_env and os.environ.get(config.model.token_env):

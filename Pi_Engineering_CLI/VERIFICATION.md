@@ -31,16 +31,22 @@ above for the current tree and does not re-open or close the external gates.
 
 | Claim | Executed evidence | Result |
 | --- | --- | --- |
-| Regression behavior | 123 tests in tests/, consecutive `unittest discover` runs | PASS |
+| Regression behavior | 129 tests in tests/, consecutive `unittest discover` runs | PASS |
 | Animated live operation | `Terminal.operation` renders non-nested and leaves an empty `_live_stack` on completion and KeyboardInterrupt | PASS |
+| Provider diagnostics | Codex failure parses the last structured stdout/stderr event and reports credits/auth/rate-limit reasons instead of a generic error | PASS |
+| Tool-grant guidance | Unknown or ungranted tools name the agent allowlist or the `mcp add` step in the error | PASS |
 | Distribution | Rebuilt 0.6.0 wheel installs non-editably; `profile list` shows four presets; `tests/check_distribution.py` passes | PASS |
 | Artifact identity | `build/lib` modules byte-identical to source; wheel and source zip digests recorded in `SHA256SUMS.txt` | PASS |
 
 Patch fixes: stale-ticket approvals are invalidated when a ticket changes,
 tenant-scoped state treats an empty tenant as no rows, p95 uses nearest rank,
-component analysis builds adjacency once, and the animated live stack renders
-and cleans up correctly. The declared 0.6.0 identity is unchanged; the wheel
-was rebuilt locally and is not published.
+component analysis builds adjacency once, the animated live stack renders and
+cleans up correctly, Codex provider failures surface the real reason from the
+last structured event, unknown/ungranted tools explain how to grant them, and
+`doctor` names an unconfigured model. The declared 0.6.0 identity is unchanged;
+the wheel was rebuilt locally and is not published. Live hosted-model
+acceptance remains blocked: the available Codex account has no credits, and no
+Ollama service or cloud API key is present.
 
 ## 0.5.0 graph release (retained evidence)
 

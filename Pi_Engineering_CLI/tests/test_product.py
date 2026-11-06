@@ -60,6 +60,18 @@ class ProductTests(unittest.IsolatedAsyncioTestCase):
         nodes = [e["kind"] for e in self.workspace.events(task["id"]) if e["kind"] in GRAPH]
         self.assertEqual(nodes, ["intake", "context", "propose", "policy", "execute", "verify", "propose", "complete"])
 
+    async def test_disallowed_tool_message_names_the_agent_allowlist(self):
+        with self.assertRaisesRegex(UserError, "not in this agent's allowlist.*agent set"):
+            await Engine(self.workspace).propose_tool("echoer__echo", {"value": "x"})
+
+    async def test_unknown_mcp_tool_points_at_mcp_add(self):
+        settings = self.config.agents["engineer"].model_copy(
+            update={"tools": [*self.config.agents["engineer"].tools, "ghost__echo"]})
+        self.config.agents["engineer"] = settings
+        self.workspace.save(self.config)
+        with self.assertRaisesRegex(UserError, "mcp add"):
+            await Engine(self.workspace).propose_tool("ghost__echo", {"value": "x"})
+
     async def test_write_requires_exact_approval_survives_restart_and_replays_once(self):
         model = SequenceModel([tool("workspace_write", {"path": "new.txt", "content": "new", "expected_hash": "missing"})])
         task = await Engine(self.workspace, model=model).start("Write new.txt")
