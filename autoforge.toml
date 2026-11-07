@@ -1,0 +1,45 @@
+# AutoForge verification gate for the Pi Engineering platform.
+# Every entry is an argv array executed with this repository root as cwd.
+# Mirrors Pi_Engineering_CLI/.github/workflows/ci.yml ("CLI qualification")
+# and the AGENTS.md release-hygiene checklist. No shell interpolation.
+
+[verification]
+commands = [
+  # 1. Full unit suite against the source tree (CI parity: unittest discover).
+  ["/usr/bin/env", "PYTHONPATH=Pi_Engineering_CLI", "Pi_Engineering_CLI/.venv/bin/python", "-m", "unittest", "discover", "-s", "Pi_Engineering_CLI/tests"],
+
+  # 2. Build the wheel exactly as CI does (isolated build environment).
+  ["Pi_Engineering_CLI/.venv/bin/python", "-m", "build", "--wheel", "--outdir", "Pi_Engineering_CLI/dist", "Pi_Engineering_CLI"],
+
+  # 3. Installed-package smoke: proposal -> approval -> write/readback -> replay ->
+  #    receipts/trace -> knowledge -> memory -> checks -> encrypted backup/restore.
+  #    The executable must be absolute: the checker invokes it with cwd=<tempdir>
+  #    (mirrors CI's `$(command -v pi-engineering)`).
+  ["Pi_Engineering_CLI/.venv/bin/python", "Pi_Engineering_CLI/tests/check_distribution.py", "/Volumes/Parth Patel/Project/PI/Pi_Engineering_CLI/.venv/bin/pi-engineering"],
+
+  # 4. Persona presets present on the installed CLI (AGENTS.md: not empty).
+  ["Pi_Engineering_CLI/.venv/bin/pi-engineering", "profile", "list"],
+
+  # 5. Static security scan of the 15 production modules (CI parity).
+  ["Pi_Engineering_CLI/.venv/bin/python", "-m", "bandit",
+   "Pi_Engineering_CLI/pi_app.py",
+   "Pi_Engineering_CLI/pi_workspace.py",
+   "Pi_Engineering_CLI/pi_engine.py",
+   "Pi_Engineering_CLI/pi_tools.py",
+   "Pi_Engineering_CLI/pi_models.py",
+   "Pi_Engineering_CLI/pi_operations.py",
+   "Pi_Engineering_CLI/pi_knowledge.py",
+   "Pi_Engineering_CLI/pi_workflow.py",
+   "Pi_Engineering_CLI/pi_server.py",
+   "Pi_Engineering_CLI/pi_terminal.py",
+   "Pi_Engineering_CLI/pi_qualification.py",
+   "Pi_Engineering_CLI/pi_live.py",
+   "Pi_Engineering_CLI/pi_prompt.py",
+   "Pi_Engineering_CLI/pi_profile.py",
+   "Pi_Engineering_CLI/pi_system.py"],
+
+  # 6. Vulnerability audit of the locked requirements (AGENTS.md release hygiene).
+  ["Pi_Engineering_CLI/.venv/bin/python", "-m", "pip_audit", "-r", "Pi_Engineering_CLI/requirements.lock", "--no-deps", "--progress-spinner", "off"],
+]
+
+production_commands = []

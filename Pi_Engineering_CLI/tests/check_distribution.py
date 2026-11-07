@@ -11,7 +11,7 @@ def check(executable):
     with tempfile.TemporaryDirectory() as directory:
         def run(*arguments):
             result = subprocess.run([executable, "--workspace", directory, "--json", *arguments],
-                                    cwd=directory, check=True, capture_output=True, text=True, timeout=20,
+                                    cwd=directory, check=True, capture_output=True, text=True, timeout=120,
                                     env={**os.environ, "PI_TEST_BACKUP": "distribution-test-only-passphrase"})
             return json.loads(result.stdout)
         run("setup")

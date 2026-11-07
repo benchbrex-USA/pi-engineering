@@ -1,2 +1,2 @@
-1c3fd2d62f5f2f1879f6ac15f3c2a038155746a03b5e273e25a94fd681056536  dist/pi_engineering-0.6.0-py3-none-any.whl
-4e3d347169294a584d8152315553bd182d1653f4dc9d7b5ad456388a921063c6  ../Pi_Engineering_CLI.zip
+ccd41e04965b1c13e8c930303a98fa1473edcc46fe6ea61cf72e0e95c003e4e7  dist/pi_engineering-0.6.0-py3-none-any.whl
+1ab62209ec87ef5c8e84a634545fcb24fb83d439ac8d96fa776829988ec2e8a3  ../Pi_Engineering_CLI.zip
