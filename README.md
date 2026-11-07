@@ -1,5 +1,8 @@
 # Pi Engineering Platform
 
+[![CLI qualification](https://github.com/benchbrex-USA/pi-engineering/actions/workflows/ci.yml/badge.svg)](https://github.com/benchbrex-USA/pi-engineering/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 A terminal-native platform for governed AI engineering — built for developers,
 security engineers, and technical leaders.
 
@@ -82,3 +85,12 @@ No deletion of the archived teaching companion or legacy modules.
 - `Pi_Engineering_CLI/` — product platform (`pi-engineering`)
 - `Pi_Engineering_Companion/` — offline teaching lab
 - `benchmarks/` — evaluation reports and harness assets
+
+## Contributing
+
+Read [`Pi_Engineering_CLI/AGENTS.md`](Pi_Engineering_CLI/AGENTS.md) first — it
+holds the non-negotiables (additive builds, frozen terminal UI contracts,
+preserved authority model), the test commands, and the release-hygiene
+checklist. Every push runs the full qualification matrix (Ubuntu/macOS ×
+Python 3.11/3.12: unit suite, wheel build, installed-package smoke test,
+bandit, pip-audit) — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml).

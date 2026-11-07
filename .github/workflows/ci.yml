@@ -1,0 +1,28 @@
+# CLI qualification — runs the product CI at the repository root.
+# GitHub only reads .github/workflows/ at the repo root; this mirrors
+# Pi_Engineering_CLI/.github/workflows/ci.yml (which ships inside the
+# release zip) with working-directory set for the product subtree.
+name: CLI qualification
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ['3.11', '3.12']
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: Pi_Engineering_CLI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -c requirements.lock . build
+      - run: python -m unittest discover -s tests -v
+      - run: python -m build --wheel
+      - run: python tests/check_distribution.py "$(command -v pi-engineering)"
+      - run: python -m pip install pip-audit==2.10.1 bandit==1.9.4
+      - run: python -m pip_audit . --progress-spinner off
+      - run: python -m bandit pi_app.py pi_workspace.py pi_engine.py pi_tools.py pi_models.py pi_operations.py pi_knowledge.py pi_workflow.py pi_server.py pi_terminal.py pi_qualification.py pi_live.py pi_prompt.py pi_profile.py pi_system.py
