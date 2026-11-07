@@ -145,6 +145,29 @@ The nine historical live-model cases above were obtained on 0.3.1. Version 0.4.0
 also awaits subprocess stdin closure to consume broken-pipe cleanup errors;
 the new two-step PTY smoke test exercised the updated adapter.
 
+## 0.6.0 re-verification addendum (2026-11-08)
+
+Re-ran the release gate after a dependency security update. Verdict: PASS WITH
+EXTERNAL GATES (unchanged). Evidence, macOS arm64, Python 3.11:
+
+- pip-audit previously reported 34 known vulnerabilities in 4 locked packages
+  (certifi 2026.7.22, mcp 1.29.1, PyJWT 2.14.0, pypdf 6.16.1). Locked pins
+  bumped in `requirements.lock` and `pyproject.toml` to certifi 2026.10.18,
+  mcp 1.30.0, PyJWT 2.15.0, pypdf 6.21.4. Full suite: 129 tests OK.
+- AutoForge verification gate (`autoforge.toml`, argv-only, mirrors
+  `.github/workflows/ci.yml`): unittest discover suite, isolated wheel build,
+  installed-package smoke (`tests/check_distribution.py`), profile presets
+  (4), bandit on 15 production modules (0 findings), pip-audit on locked
+  requirements (no known vulnerabilities). All six checks passed; evidence in
+  `.autoforge/verification/20261107T204628Z-e99a46b9/result.json`.
+- `build_release.py` regenerated `Pi_Engineering_CLI.zip` (68 files; no
+  `.pi-engineering`, `.eval`, `.venv` or cache state inside); SHA256SUMS.txt
+  regenerated. Clean-room check: fresh venv, `pip install
+  dist/pi_engineering-0.6.0-py3-none-any.whl`, `--version` 0.6.0, presets
+  present.
+- `tests/check_distribution.py` per-call subprocess timeout raised 20s -> 120s
+  for high-latency filesystems; no assertion changes.
+
 ## External gates
 
 1. Customer account acceptance: no private customer endpoint, scoped test
